@@ -99,14 +99,14 @@ const createNewblog = async (req , res) => {
 
 /* ============ Start:: Create Blog  ============= */
 const deleteBlog = async (req , res) => {
-    try {
-        let blogId = req.body.blogId;
-        let query = {_id : blogId};
-      
-        if(blogId.trim() === '' || blogId.trim() === null){
-            res.status(400).json({'message' : "Bad request"});
-            return;
-        } 
+    let blogId = req.body._id;
+    let query = {_id : blogId};
+  
+    if(!blogId) return res.status(400).json({'error' : "Bad request"}) ;
+    
+    try {      
+        const blogExist = await BlogSchema.findOne({_id : blogId});
+        if(!blogExist) return res.status(404).json({"error" : "Blog does not exist"});
 
         let data = await BlogSchema.deleteOne(query);
         if(data.deletedCount === 1 ){
@@ -114,11 +114,12 @@ const deleteBlog = async (req , res) => {
             return;
         }
         else{
-            res.status(404).json({"message" : 'we don\'t have that blog'});
+            res.status(404).json({"error" : 'we don\'t have that blog'});
             return;
         }
     } catch (error) {   
-        res.status(500).json({"message" : 'Server error'});        
+        console.log(error);
+        res.status(500).json({"error" : 'Server error'});        
     }
 }
 /* ============== End:: Create Blog  ============= */

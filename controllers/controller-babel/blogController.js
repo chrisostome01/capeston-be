@@ -151,19 +151,21 @@ const createNewblog = async (req, res) => {
 exports.createNewblog = createNewblog;
 
 const deleteBlog = async (req, res) => {
+  let blogId = req.body._id;
+  let query = {
+    _id: blogId
+  };
+  if (!blogId) return res.status(400).json({
+    'error': "Bad request"
+  });
+
   try {
-    let blogId = req.body.blogId;
-    let query = {
+    const blogExist = await _Blogs.default.findOne({
       _id: blogId
-    };
-
-    if (blogId.trim() === '' || blogId.trim() === null) {
-      res.status(400).json({
-        'message': "Bad request"
-      });
-      return;
-    }
-
+    });
+    if (!blogExist) return res.status(404).json({
+      "error": "Blog does not exist"
+    });
     let data = await _Blogs.default.deleteOne(query);
 
     if (data.deletedCount === 1) {
@@ -173,13 +175,14 @@ const deleteBlog = async (req, res) => {
       return;
     } else {
       res.status(404).json({
-        "message": 'we don\'t have that blog'
+        "error": 'we don\'t have that blog'
       });
       return;
     }
   } catch (error) {
+    console.log(error);
     res.status(500).json({
-      "message": 'Server error'
+      "error": 'Server error'
     });
   }
 };
@@ -228,24 +231,25 @@ const updateBlog = async (req, res) => {
     if (data.matchedCount === 1) {
       if (data.modifiedCount == 1) {
         res.status(200).json({
-          "success": `${blogId}`
+          "message": "Updated",
+          "data": `${blogId}`
         });
         return;
       } else {
         res.status(200).json({
-          "success": `No change`
+          "message": `No change`
         });
         return;
       }
     } else {
       res.status(404).json({
-        "message": 'we don\'t have that blog'
+        "error": 'we don\'t have that blog'
       });
       return;
     }
   } catch (error) {
     res.status(500).json({
-      "message": 'Server error'
+      "error": 'Server error'
     });
   }
 };
