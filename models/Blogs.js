@@ -1,10 +1,6 @@
 import mongoose from 'mongoose';
 
 const blogSchema = new mongoose.Schema({
-    creatorId:{
-        type:String,
-        required:'Creator id is required'
-    },
     Subtitle:{
         type: String,
         required:'Subtile is requiered'

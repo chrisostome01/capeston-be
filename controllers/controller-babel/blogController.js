@@ -9,11 +9,26 @@ var _connection = _interopRequireDefault(require("../../connection/connection-ba
 
 var _Blogs = _interopRequireDefault(require("../../models/models-babel/Blogs"));
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+var _joi = _interopRequireDefault(require("joi"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/* ============ Start:: validation ================== */
+const validateBlogData = data => {
+  const formSchema = _joi.default.object({
+    Subtitle: _joi.default.string().required().min(2),
+    Title: _joi.default.string().required().min(3),
+    Description: _joi.default.string().required(),
+    postBanner: _joi.default.string().required()
+  });
+
+  const value = formSchema.validate(data, {
+    abortEarly: false
+  });
+  return value;
+};
+/* ============ End:: Validation ==================== */
+
 /* ============ Start:: Getting all Blogs but with limit ============= */
 
 
@@ -89,25 +104,31 @@ const createNewblog = async (req, res) => {
   const {
     Subtitle,
     Title,
-    dateCreated,
-    info,
-    postBanner,
-    rate
+    Description,
+    postBanner
   } = req.body;
+  const {
+    error
+  } = validateBlogData({
+    Subtitle,
+    Title,
+    Description,
+    postBanner
+  });
+  let rate = 1;
+  if (error) return res.status(400).json({
+    "error": error.details[0].message
+  });
 
   try {
-    // validations will happen here
-    // if(!newBlogData){
-    //     res.status(400).json({'message' : "Please make sure you have provided all blogs information"});
-    //     return;
-    // }  
+    const dateCreated = Date.now();
     const creatorId = req.user._id;
     const newBlog = new _Blogs.default({
       Subtitle,
       Title,
       creatorId: creatorId,
       dateCreated,
-      info,
+      info: Description,
       postBanner,
       rate
     });

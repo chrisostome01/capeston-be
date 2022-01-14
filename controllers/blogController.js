@@ -1,8 +1,21 @@
 import db from '../../connection/connection-babel/connection';
 import BlogSchema from '../../models/models-babel/Blogs';
+import Joi from 'joi';
 
 
+/* ============ Start:: validation ================== */
+const validateBlogData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().required().min(2),
+        Title: Joi.string().required().min(3),
+        Description:Joi.string().required(),
+        postBanner:Joi.string().required()
+    })
 
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
+/* ============ End:: Validation ==================== */
 
 /* ============ Start:: Getting all Blogs but with limit ============= */
 const getAllBlogs = async (req ,  res) => {
@@ -56,20 +69,20 @@ const getSpacificBlog = async (req , res) => {
 
 /* ============ Start:: Create Blog  ============= */
 const createNewblog = async (req , res) => {
-    const { Subtitle,Title,dateCreated,info,postBanner,rate } =  req.body;
+    const { Subtitle,Title,Description,postBanner} =  req.body;
+    const { error } = validateBlogData({ Subtitle,Title,Description,postBanner }) ;
+    let rate = 1;
+    if(error) return res.status(400).json({"error" : error.details[0].message }) ;
     try {
-        // validations will happen here
-        // if(!newBlogData){
-        //     res.status(400).json({'message' : "Please make sure you have provided all blogs information"});
-        //     return;
-        // }  
+        
+        const dateCreated = Date.now();
         const creatorId = req.user._id ;  
         const newBlog = new BlogSchema({
             Subtitle,
             Title,
             creatorId : creatorId ,
             dateCreated,
-            info,
+            info : Description,
             postBanner,
             rate
         });
