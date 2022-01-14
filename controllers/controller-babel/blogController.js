@@ -151,13 +151,13 @@ const createNewblog = async (req, res) => {
 exports.createNewblog = createNewblog;
 
 const deleteBlog = async (req, res) => {
+  if (!req.body._id) return res.status(400).json({
+    'error': "Bad request"
+  });
   let blogId = req.body._id;
   let query = {
     _id: blogId
   };
-  if (!blogId) return res.status(400).json({
-    'error': "Bad request"
-  });
 
   try {
     const blogExist = await _Blogs.default.findOne({
@@ -180,9 +180,8 @@ const deleteBlog = async (req, res) => {
       return;
     }
   } catch (error) {
-    console.log(error);
     res.status(500).json({
-      "error": 'Server error'
+      "error": 'Server error , make sure you you id is accurate'
     });
   }
 };

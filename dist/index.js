@@ -10,6 +10,8 @@ var _blogRoute = _interopRequireDefault(require("../routes/routes-babel/blogRout
 
 var _contactUsRoute = _interopRequireDefault(require("../routes/routes-babel/contactUsRoute.js"));
 
+var _commentRoute = _interopRequireDefault(require("../routes/routes-babel/commentRoute.js"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const app = (0, _express.default)();
@@ -28,5 +30,10 @@ app.use('/api/v1/blog', _blogRoute.default);
 
 app.use('/api/v1/contact', _contactUsRoute.default);
 /* ===== End:: blog routes ============ */
+
+/* ===== Start:: comment routes ========== */
+
+app.use('/api/v1/comment', _commentRoute.default);
+/* ===== End:: comment routes ============ */
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
