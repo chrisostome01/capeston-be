@@ -1,12 +1,34 @@
-/* ==================== Start:: DB data =================== */ 
+/* ==================== Start:: File import =================== */ 
 import db from '../../connection/connection-babel/connection';
 import Users from '../../models/models-babel/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import jwt from 'jsonwebtoken'
+import jwt from 'jsonwebtoken';
+import Joi from 'joi';
 
 dotenv.config();
-/* ==================== End:: DB data ==================== */ 
+/* ==================== End:: File import ==================== */ 
+
+
+/* ==================== Start:: Valiadation ==================== */ 
+
+const loginValidation = async (formData) => {
+    const schema = Joi.object({
+        Email : Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .required(),
+        Password: Joi.string().required(),
+    })
+    
+    try {
+        const value = schema.validate(formData , schema);
+        return value;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+/* ==================== End:: Valiadation ==================== */ 
 
 /* =========== Start:: Getting all users ========== */
 const selectAllUsers = async (req , res) => {
@@ -52,6 +74,7 @@ const createNewUser = async (req,res) => {
   
 
     try {
+       
         const { Username , password , Email , userId , emailIsVerified ,Fullname } =  req.body;
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
@@ -67,7 +90,8 @@ const createNewUser = async (req,res) => {
             Email , 
             userId ,
             emailIsVerified ,
-            Fullname
+            Fullname,
+            userType : "Normal"
         });
         const savedUser = await newUser.save();
      
@@ -84,8 +108,10 @@ const createNewUser = async (req,res) => {
 const login = async (req,res) => {
     // validation for joi
     const { Email , Password } = req.body;
-
-    try {
+    const validationValue =   loginValidation({ Email , Password });
+    console.log(validationValue);
+    return;
+    try {  
         const userDbData = await Users.findOne({Email : Email});
         const passwordMatch = await bcrypt.compare(Password,userDbData.Password);
 

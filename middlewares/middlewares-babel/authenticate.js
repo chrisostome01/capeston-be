@@ -25,7 +25,7 @@ const auth = async (req, res, next) => {
     req.user = verified;
     next();
   } catch (error) {
-    res.status(500).json({
+    res.status(401).json({
       "error": "Access denied , please try again"
     });
   }

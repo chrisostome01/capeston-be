@@ -15,11 +15,36 @@ var _dotenv = _interopRequireDefault(require("dotenv"));
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
+var _joi = _interopRequireDefault(require("joi"));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* ==================== Start:: DB data =================== */
+/* ==================== Start:: File import =================== */
 _dotenv.default.config();
-/* ==================== End:: DB data ==================== */
+/* ==================== End:: File import ==================== */
+
+/* ==================== Start:: Valiadation ==================== */
+
+
+const loginValidation = async formData => {
+  const schema = _joi.default.object({
+    Email: _joi.default.string().email({
+      minDomainSegments: 2,
+      tlds: {
+        allow: ['com', 'net']
+      }
+    }).required(),
+    Password: _joi.default.string().required()
+  });
+
+  try {
+    const value = schema.validate(formData, schema);
+    return value;
+  } catch (error) {
+    console.log(error);
+  }
+};
+/* ==================== End:: Valiadation ==================== */
 
 /* =========== Start:: Getting all users ========== */
 
@@ -102,7 +127,8 @@ const createNewUser = async (req, res) => {
       Email,
       userId,
       emailIsVerified,
-      Fullname
+      Fullname,
+      userType: "Normal"
     });
     const savedUser = await newUser.save();
     res.status(200).json({
@@ -128,6 +154,12 @@ const login = async (req, res) => {
     Email,
     Password
   } = req.body;
+  const validationValue = loginValidation({
+    Email,
+    Password
+  });
+  console.log(validationValue);
+  return;
 
   try {
     const userDbData = await _Users.default.findOne({
