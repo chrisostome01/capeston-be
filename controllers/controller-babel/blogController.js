@@ -18,14 +18,15 @@ function _interopRequireDefault(obj) {
 
 
 const getAllBlogs = async (req, res) => {
+  let limitNumber = req.query.limit != null || req.query.limit != undefined ? req.query.limit : 6;
+
   try {
-    let limitNumber = 5;
     const blogsData = await _Blogs.default.find({}).limit(limitNumber);
 
     if (blogsData.length != 0) {
       res.status(200).json(blogsData);
     } else {
-      res.status(401).json({
+      res.status(404).json({
         "message": 'No blogs found'
       });
     }
@@ -43,15 +44,19 @@ const getAllBlogs = async (req, res) => {
 exports.getAllBlogs = getAllBlogs;
 
 const getSpacificBlog = async (req, res) => {
+  let blogId = req.params.blogId;
+  if (blogId == null || blogId == undefined || blogId.trim() == '') return res.status(400).json({
+    "error": "Bad request"
+  });
+
   try {
-    let blogId = req.params.blogId;
     let query = {
       _id: blogId
     };
 
     if (blogId.trim() === '' || blogId.trim() === null) {
       res.status(400).json({
-        'message': "Bad request"
+        'error': "Bad request"
       });
       return;
     }
@@ -63,13 +68,13 @@ const getSpacificBlog = async (req, res) => {
       return;
     } else {
       res.status(404).json({
-        "message": 'blog not found'
+        "error": 'blog not found'
       });
       return;
     }
   } catch (error) {
     res.status(500).json({
-      "message": 'Server error'
+      "error": 'Server error'
     });
   }
 };
@@ -81,20 +86,37 @@ const getSpacificBlog = async (req, res) => {
 exports.getSpacificBlog = getSpacificBlog;
 
 const createNewblog = async (req, res) => {
-  const newBlogData = req.body;
+  const {
+    Subtitle,
+    Title,
+    dateCreated,
+    info,
+    postBanner,
+    rate
+  } = req.body;
 
   try {
     // validations will happen here
-    if (!newBlogData) {
-      res.status(400).json({
-        'message': "Please make sure you have provided all blogs information"
-      });
-      return;
-    }
-
-    await _Blogs.default.insertMany([newBlogData]);
-    res.status(200).json(newBlogData);
+    // if(!newBlogData){
+    //     res.status(400).json({'message' : "Please make sure you have provided all blogs information"});
+    //     return;
+    // }  
+    const creatorId = req.user._id;
+    const newBlog = new _Blogs.default({
+      Subtitle,
+      Title,
+      creatorId: creatorId,
+      dateCreated,
+      info,
+      postBanner,
+      rate
+    });
+    const savedBlog = await newBlog.save();
+    res.status(200).json({
+      "blogId": newBlog._id
+    });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       "message": "Server error"
     });

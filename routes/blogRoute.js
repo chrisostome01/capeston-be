@@ -8,22 +8,22 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 /* ========== Start:: Getting  All blogs ======== */ 
-    router.get('/',authentication.auth,blog.getAllBlogs);
+    router.get('/',blog.getAllBlogs);
 /* =========== End:: Getting  All blogs ========= */
 
 /* ========== Start:: Getting  Spacific blog ======== */ 
-    router.get('/:blogId',blog.getSpacificBlog);
+    router.get('/find',blog.getSpacificBlog);
 /* =========== End:: Getting  Spacific blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.post('/create',blog.createNewblog);
+    router.post('/create',authentication.admin,blog.createNewblog);
 /* =========== End:: Create blog ========= */
 
 /* ========== Start:: Delete blog ======== */ 
-    router.delete('/delete',blog.deleteBlog);
+    router.delete('/delete',authentication.admin,blog.deleteBlog);
 /* =========== End:: Delete blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.put('/update',blog.updateBlog);
+    router.put('/update',authentication.admin,blog.updateBlog);
 /* =========== End:: Create blog ========= */
 export default router;
