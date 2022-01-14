@@ -15,13 +15,13 @@ router.get('/', users.selectAllUsers);
 
 /* ==================== Start:: Get spacific user ========================= */ 
 
-router.get('/find',users.getSpacificUser);
+// router.get('/find',users.getSpacificUser);
 
 /* ========================= End:: Get spacific user ====================== */ 
 
 /* ====== Start:: Creating users =========== */ 
 
-router.post('/create',users.createNewUser );
+router.post('/register',users.createNewUser );
 
 /* ====== End:: Creating users =========== */ 
 

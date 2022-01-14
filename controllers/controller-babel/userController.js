@@ -19,26 +19,55 @@ var _joi = _interopRequireDefault(require("joi"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* ==================== Start:: File import =================== */
+/* ==================== Start:: imports =================== */
 _dotenv.default.config();
-/* ==================== End:: File import ==================== */
+/* ==================== End:: imports ==================== */
 
 /* ==================== Start:: Valiadation ==================== */
 
 
-const loginValidation = async formData => {
+const loginValidation = formData => {
   const schema = _joi.default.object({
     Email: _joi.default.string().email({
       minDomainSegments: 2,
       tlds: {
         allow: ['com', 'net']
       }
-    }).required(),
+    }).required().messages({
+      'string.empty': `"a" cannot be an empty field`
+    }),
     Password: _joi.default.string().required()
   });
 
   try {
-    const value = schema.validate(formData, schema);
+    const value = schema.validate(formData, {
+      abortEarly: false
+    });
+    return value;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const registerValidation = formData => {
+  const schema = _joi.default.object({
+    Email: _joi.default.string().email({
+      minDomainSegments: 2,
+      tlds: {
+        allow: ['com', 'net']
+      }
+    }).required().messages({
+      'string.empty': `"a" cannot be an empty field`
+    }),
+    password: _joi.default.string().min(6).alphanum().required(),
+    Username: _joi.default.string().min(6).required(),
+    Fullname: _joi.default.string().min(5).required()
+  });
+
+  try {
+    const value = schema.validate(formData, {
+      abortEarly: false
+    });
     return value;
   } catch (error) {
     console.log(error);
@@ -105,39 +134,54 @@ const getSpacificUser = async (req, res) => {
 exports.getSpacificUser = getSpacificUser;
 
 const createNewUser = async (req, res) => {
+  const {
+    Username,
+    password,
+    Email,
+    Fullname
+  } = req.body;
+  const emailIsVerified = false;
+  const {
+    error
+  } = registerValidation({
+    Email,
+    password,
+    Username,
+    Fullname
+  });
+  if (error) return res.status(400).json({
+    "error": error.details[0].message
+  });
+
   try {
-    const {
-      Username,
-      password,
-      Email,
-      userId,
-      emailIsVerified,
-      Fullname
-    } = req.body;
     const salt = await _bcrypt.default.genSalt(10);
-    const hashedPassword = await _bcrypt.default.hash(password, salt); // validations will happen here
-    // if(newUsers.trim() === '' || newUsers.trim() === null){
-    //     res.status(400).json({'message' : "Please make sure you have provided user information"});
-    //     return;
-    // }
+    const hashedPassword = await _bcrypt.default.hash(password, salt);
+    /* ===== Start:: making sure email is unique ====== */
+
+    const emailExist = await _Users.default.findOne({
+      Email: Email
+    });
+    if (emailExist) return res.status(400).json({
+      "error": "Email already exist "
+    });
+    /* ====== End:: making sure email is unique ======= */
 
     const newUser = new _Users.default({
       Username,
       Password: hashedPassword,
       Email,
-      userId,
       emailIsVerified,
       Fullname,
-      userType: "Normal"
+      userType: "normal"
     });
     const savedUser = await newUser.save();
     res.status(200).json({
-      savedUser
+      "userId": savedUser._id
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      "message": "Server error"
+      "error": "Server error"
     });
   }
 };
@@ -154,28 +198,35 @@ const login = async (req, res) => {
     Email,
     Password
   } = req.body;
-  const validationValue = loginValidation({
+  const {
+    error
+  } = loginValidation({
     Email,
     Password
   });
-  console.log(validationValue);
-  return;
+  if (error) return res.status(400).json({
+    "error": error.details[0].message
+  });
 
   try {
-    const userDbData = await _Users.default.findOne({
+    const emailExist = await _Users.default.findOne({
       Email: Email
     });
-    const passwordMatch = await _bcrypt.default.compare(Password, userDbData.Password);
+    if (!emailExist) return res.status(400).json({
+      "error": "Unknown user email "
+    });
+    const passwordMatch = await _bcrypt.default.compare(Password, emailExist.Password);
     if (!passwordMatch) return res.status(400).json({
       "error": "Wrong password"
     }); // setting token
 
     const token = _jsonwebtoken.default.sign({
-      _id: userDbData._id
+      _id: emailExist._id
     }, process.env.TOKEN_SECRET);
 
     res.header('auth-token', token).status(200).json({
-      "message": "Logged in"
+      "message": "Logged in",
+      "token": token
     });
   } catch (error) {
     console.log(error);

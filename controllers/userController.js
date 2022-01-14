@@ -1,4 +1,4 @@
-/* ==================== Start:: File import =================== */ 
+/* ==================== Start:: imports =================== */ 
 import db from '../../connection/connection-babel/connection';
 import Users from '../../models/models-babel/Users';
 import bcrypt from 'bcrypt';
@@ -7,21 +7,45 @@ import jwt from 'jsonwebtoken';
 import Joi from 'joi';
 
 dotenv.config();
-/* ==================== End:: File import ==================== */ 
+/* ==================== End:: imports ==================== */ 
 
 
 /* ==================== Start:: Valiadation ==================== */ 
 
-const loginValidation = async (formData) => {
+const loginValidation = (formData) => {
     const schema = Joi.object({
         Email : Joi.string()
         .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-        .required(),
+        .required()
+        .messages({
+            'string.empty': `"a" cannot be an empty field`
+          }),
         Password: Joi.string().required(),
     })
     
     try {
-        const value = schema.validate(formData , schema);
+        const value = schema.validate(formData , { abortEarly: false });
+        return value;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const registerValidation = (formData) => {
+    const schema = Joi.object({
+        Email : Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .required()
+        .messages({
+            'string.empty': `"a" cannot be an empty field`
+          }),
+        password: Joi.string().min(6).alphanum().required(),
+        Username: Joi.string().min(6).required(),
+        Fullname: Joi.string().min(5).required(),
+    })
+    
+    try {
+        const value = schema.validate(formData , { abortEarly: false });
         return value;
     } catch (error) {
         console.log(error);
@@ -71,35 +95,35 @@ const getSpacificUser = async (req , res) => {
 
 /* =========== Start:: Creating new users ======== */
 const createNewUser = async (req,res) => {
-  
+    const { Username , password , Email ,Fullname } =  req.body;
+    const emailIsVerified = false ;
+    const {error} = registerValidation({ Email, password, Username, Fullname } );
+    if(error) return res.status(400).json({"error" : error.details[0].message});
 
-    try {
-       
-        const { Username , password , Email , userId , emailIsVerified ,Fullname } =  req.body;
+    
+    try {      
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
-        // validations will happen here
-        // if(newUsers.trim() === '' || newUsers.trim() === null){
-        //     res.status(400).json({'message' : "Please make sure you have provided user information"});
-        //     return;
-        // }
-
+      
+        /* ===== Start:: making sure email is unique ====== */
+            const emailExist = await Users.findOne({Email : Email});
+            if(emailExist) return res.status(400).json({"error" : "Email already exist " });
+        /* ====== End:: making sure email is unique ======= */
         const newUser = new Users({
             Username , 
             Password : hashedPassword ,
             Email , 
-            userId ,
             emailIsVerified ,
             Fullname,
-            userType : "Normal"
+            userType : "normal"
         });
         const savedUser = await newUser.save();
      
-        res.status(200).json({ savedUser} );
+        res.status(200).json({ "userId" : savedUser._id} );
     }
     catch(error){
         console.log(error);
-        res.status(500).json({"message" : "Server error"});
+        res.status(500).json({"error" : "Server error"});
     }
 }
 /* =========== End:: Creating new users ========== */
@@ -108,18 +132,18 @@ const createNewUser = async (req,res) => {
 const login = async (req,res) => {
     // validation for joi
     const { Email , Password } = req.body;
-    const validationValue =   loginValidation({ Email , Password });
-    console.log(validationValue);
-    return;
-    try {  
-        const userDbData = await Users.findOne({Email : Email});
-        const passwordMatch = await bcrypt.compare(Password,userDbData.Password);
+    const { error } =   loginValidation({ Email , Password });
+    if(error) return res.status(400).json({"error" : error.details[0].message }) ;
 
+    try {  
+        const emailExist = await Users.findOne({Email : Email});
+        if(!emailExist) return res.status(400).json({"error":"Unknown user email "});
+
+        const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
         if(!passwordMatch) return res.status(400).json({"error":"Wrong password"});
-        
         // setting token
-        const token = jwt.sign({_id : userDbData._id},process.env.TOKEN_SECRET);
-        res.header('auth-token',token).status(200).json({"message" : "Logged in"});
+        const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
+        res.header('auth-token',token).status(200).json({"message" : "Logged in" , "token" : token });
     } catch (error) {     
         console.log(error);    
     }
