@@ -52,6 +52,26 @@ const registerValidation = (formData) => {
     }
 }
 
+
+const updateValidation = (formData) => {
+    const schema = Joi.object({
+        Email : Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .messages({
+            'string.empty': `"a" cannot be an empty field`
+          }),     
+        Username: Joi.string().min(6),
+        Fullname: Joi.string().min(5)
+    })
+    
+    try {
+        const value = schema.validate(formData , { abortEarly: false });
+        return value;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 /* ==================== End:: Valiadation ==================== */ 
 
 /* =========== Start:: Getting all users ========== */
@@ -150,4 +170,38 @@ const login = async (req,res) => {
 
 }
 /* =========== End:: Login users ========== */
-export { selectAllUsers , getSpacificUser , createNewUser ,login }
+
+/* ============ Start:: Update Blog  ============= */
+const updateUser = async (req , res) => {
+    const { Username , Email ,Fullname } =  req.body;
+    const {error} = updateValidation({ Email, Username, Fullname } );
+    if(error) return res.status(400).json({"error" : error.details[0].message});
+
+    try {      
+        
+        let id = req.user._id;
+     
+        let updated = await Users.findOneAndUpdate(
+            {_id : id },
+            {$set: req.body} );
+        if(updated){
+            const updateInfo = await Users.findOne({_id : id});
+            const resUsername = updateInfo.Username ;
+            const resEmail = updateInfo.Email; 
+            const resFullname = updateInfo.Username 
+            res.status(200).json({"message" : "Updated" , "data" : { Username : resUsername , Email :resEmail ,Fullname :resFullname } });
+            return;         
+        }        
+        else{
+            res.status(500).json({"error" : 'Please try again'});
+            return;
+
+        }
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({"error" : "Server error"});
+    }
+}
+/* ============== End:: Update Blog  ============= */
+export { selectAllUsers , getSpacificUser , createNewUser ,login ,updateUser }

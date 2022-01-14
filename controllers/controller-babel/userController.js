@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.selectAllUsers = exports.login = exports.getSpacificUser = exports.createNewUser = void 0;
+exports.updateUser = exports.selectAllUsers = exports.login = exports.getSpacificUser = exports.createNewUser = void 0;
 
 var _connection = _interopRequireDefault(require("../../connection/connection-babel/connection"));
 
@@ -62,6 +62,30 @@ const registerValidation = formData => {
     password: _joi.default.string().min(6).alphanum().required(),
     Username: _joi.default.string().min(6).required(),
     Fullname: _joi.default.string().min(5).required()
+  });
+
+  try {
+    const value = schema.validate(formData, {
+      abortEarly: false
+    });
+    return value;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const updateValidation = formData => {
+  const schema = _joi.default.object({
+    Email: _joi.default.string().email({
+      minDomainSegments: 2,
+      tlds: {
+        allow: ['com', 'net']
+      }
+    }).messages({
+      'string.empty': `"a" cannot be an empty field`
+    }),
+    Username: _joi.default.string().min(6),
+    Fullname: _joi.default.string().min(5)
   });
 
   try {
@@ -234,5 +258,66 @@ const login = async (req, res) => {
 };
 /* =========== End:: Login users ========== */
 
+/* ============ Start:: Update Blog  ============= */
+
 
 exports.login = login;
+
+const updateUser = async (req, res) => {
+  const {
+    Username,
+    Email,
+    Fullname
+  } = req.body;
+  const {
+    error
+  } = updateValidation({
+    Email,
+    Username,
+    Fullname
+  });
+  if (error) return res.status(400).json({
+    "error": error.details[0].message
+  });
+
+  try {
+    let id = req.user._id;
+    let updated = await _Users.default.findOneAndUpdate({
+      _id: id
+    }, {
+      $set: req.body
+    });
+
+    if (updated) {
+      const updateInfo = await _Users.default.findOne({
+        _id: id
+      });
+      const resUsername = updateInfo.Username;
+      const resEmail = updateInfo.Email;
+      const resFullname = updateInfo.Username;
+      res.status(200).json({
+        "message": "Updated",
+        "data": {
+          Username: resUsername,
+          Email: resEmail,
+          Fullname: resFullname
+        }
+      });
+      return;
+    } else {
+      res.status(500).json({
+        "error": 'Please try again'
+      });
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      "error": "Server error"
+    });
+  }
+};
+/* ============== End:: Update Blog  ============= */
+
+
+exports.updateUser = updateUser;

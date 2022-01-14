@@ -134,7 +134,7 @@ const createNewblog = async (req, res) => {
     });
     const savedBlog = await newBlog.save();
     res.status(200).json({
-      "blogId": newBlog._id
+      "blogId": savedBlog
     });
   } catch (error) {
     console.log(error);
@@ -187,7 +187,7 @@ const deleteBlog = async (req, res) => {
 };
 /* ============== End:: Create Blog  ============= */
 
-/* ============ Start:: Create Blog  ============= */
+/* ============ Start:: Update Blog  ============= */
 
 
 exports.deleteBlog = deleteBlog;
@@ -214,11 +214,9 @@ const updateBlog = async (req, res) => {
 
   try {
     let blogId = req.body._id;
-    let query = {
+    let data = await _Blogs.default.findOneAndUpdate({
       _id: blogId
-    };
-    let data = await _Blogs.default.updateOne({
-      query,
+    }, {
       $set: {
         Subtitle,
         Title,
@@ -252,7 +250,7 @@ const updateBlog = async (req, res) => {
     });
   }
 };
-/* ============== End:: Create Blog  ============= */
+/* ============== End:: Update Blog  ============= */
 
 
 exports.updateBlog = updateBlog;
