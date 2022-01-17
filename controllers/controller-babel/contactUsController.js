@@ -78,6 +78,7 @@ const creatNewContact = async (req, res) => {
       "contactId": savedContact._id
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       "error": "Server error"
     });

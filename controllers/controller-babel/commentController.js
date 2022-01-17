@@ -9,6 +9,8 @@ var _connection = _interopRequireDefault(require("../../connection/connection-ba
 
 var _Comment = _interopRequireDefault(require("../../models/models-babel/Comment"));
 
+var _Blogs = _interopRequireDefault(require("../../models/models-babel/Blogs"));
+
 var _joi = _interopRequireDefault(require("joi"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -50,7 +52,7 @@ const newCommenting = async (req, res) => {
   });
 
   try {
-    const blogExist = await BlogSchema.findOne({
+    const blogExist = await _Blogs.default.findOne({
       _id: blogId
     });
     if (!blogExist) return res.status(404).json({
@@ -100,7 +102,7 @@ const gettingComment = async (req, res) => {
       });
     } else {
       res.status(404).json({
-        "message": 'No blogs found'
+        "message": 'No comments found'
       });
     }
   } catch (error) {

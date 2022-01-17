@@ -134,7 +134,7 @@ const createNewblog = async (req, res) => {
     });
     const savedBlog = await newBlog.save();
     res.status(200).json({
-      "blogId": savedBlog
+      "data": savedBlog
     });
   } catch (error) {
     console.log(error);

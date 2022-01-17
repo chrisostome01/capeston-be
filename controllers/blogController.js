@@ -87,11 +87,11 @@ const createNewblog = async (req , res) => {
             rate
         });
         const savedBlog = await newBlog.save();
-        res.status(200).json({"blogId" : savedBlog });
+        res.status(200).json({"data" : savedBlog });
     }
     catch(error){
         console.log(error);
-        res.status(500).json({"message" : "Server error"});
+        res.status(500).json({"error" : "Server error"});
     }
 }
 /* ============== End:: Create Blog  ============= */
@@ -101,9 +101,9 @@ const createNewblog = async (req , res) => {
 const deleteBlog = async (req , res) => {
    
   
-    if(!req.body._id) return res.status(400).json({'error' : "Bad request"}) ;
+    if(!req.query._id) return res.status(400).json({'error' : "Bad request"}) ;
 
-    let blogId = req.body._id;
+    let blogId = req.query.blogId;
     let query = {_id : blogId};
     try {      
         const blogExist = await BlogSchema.findOne({_id : blogId});

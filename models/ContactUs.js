@@ -15,7 +15,7 @@ const contactSchema = new mongoose.Schema({
     },
     subject:{
         type:String,
-        required:'subjectis required'
+        required:'subject is required'
     },
     dateCreated:{
         type:String,

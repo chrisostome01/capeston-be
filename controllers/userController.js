@@ -160,12 +160,12 @@ const login = async (req,res) => {
         if(!emailExist) return res.status(400).json({"error":"Unknown user email "});
 
         const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
-        if(!passwordMatch) return res.status(400).json({"error":"Wrong password"});
+        if(!passwordMatch) return res.status(401).json({"error":"Wrong password"});
         // setting token
         const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
         res.header('auth-token',token).status(200).json({"message" : "Logged in" , "token" : token });
     } catch (error) {     
-        console.log(error);    
+        res.status(500).json({"error":"Server error"});    
     }
 
 }

@@ -45,7 +45,7 @@ const creatNewContact = async (req,res) => {
         });
 
         const savedContact = await newContact.save();
-        return res.status(200).json({"contactId" : savedContact._id});
+        return res.status(200).json({"data" : savedContact});
     } catch (error) {
         return res.status(500).json({"error" : "Server error"})
     }

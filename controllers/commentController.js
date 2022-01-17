@@ -1,6 +1,7 @@
 /* ==================== Start:: imports =================== */ 
     import db from '../../connection/connection-babel/connection';
     import Comment from '../../models/models-babel/Comment';
+    import BlogSchema from '../../models/models-babel/Blogs';
     import Joi from 'joi';
 /* ==================== End:: imports =================== */ 
 
@@ -39,15 +40,14 @@ const newCommenting = async (req,res) => {
         res.status(200).json({"data" : SavedNewComment });
     }
     catch(error){
-        console.log(error);
-        res.status(500).json({"message" : "Server error"});
+        res.status(500).json({"message" : "Please try again"});
     }
 }
 /* =================== End:: Creating Commenting ================= */ 
 
 /* ================== Start:: Getting Commenting ================ */ 
 const gettingComment = async (req,res) => {
-    if(!req.query.q || !req.query.limit) return res.status(404).json({"error" : "Bad request"}) ;
+    if(!req.query.q || !req.query.limit) return res.status(400).json({"error" : "Bad request"}) ;
     let limitNumber = req.query.limit ;   
     let blogid = req.query.q;
 
@@ -57,10 +57,10 @@ const gettingComment = async (req,res) => {
             res.status(200).json({"data" : commentData});
         }
         else{
-            res.status(404).json({"message" : 'No blogs found'});
+            res.status(404).json({"error" : 'No comments found'});
         }
     } catch (error) {
-        res.status(500).json({ "message" : 'Server error' });
+        res.status(500).json({ "error" : 'Server error' });
     }
 }
 /* =================== End:: Getting Commenting ================= */ 

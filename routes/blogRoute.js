@@ -11,6 +11,10 @@ router.use(bodyParser.urlencoded({ extended: false }));
     router.get('/',blog.getAllBlogs);
 /* =========== End:: Getting  All blogs ========= */
 
+/* ========== Start:: Getting  All blogs ======== */ 
+    router.get('/limited',blog.getAllBlogs);
+/* =========== End:: Getting  All blogs ========= */
+
 /* ========== Start:: Getting  Spacific blog ======== */ 
     router.get('/find',blog.getSpacificBlog);
 /* =========== End:: Getting  Spacific blog ========= */

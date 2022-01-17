@@ -20,6 +20,10 @@ const blogSchema = new mongoose.Schema({
     postBanner:{
         type:String,
         required:'Post image is require'
+    },
+    creatorId:{
+        type:String,
+        required:'Post image is require'        
     }
 });
 

@@ -240,7 +240,7 @@ const login = async (req, res) => {
       "error": "Unknown user email "
     });
     const passwordMatch = await _bcrypt.default.compare(Password, emailExist.Password);
-    if (!passwordMatch) return res.status(400).json({
+    if (!passwordMatch) return res.status(401).json({
       "error": "Wrong password"
     }); // setting token
 
@@ -253,7 +253,9 @@ const login = async (req, res) => {
       "token": token
     });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      "error": "Server error"
+    });
   }
 };
 /* =========== End:: Login users ========== */
