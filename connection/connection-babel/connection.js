@@ -10,13 +10,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 _dotenv.default.config();
 
-_mongoose.default.connect(process.env.CONNECTIONSTRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+const databaseConnection = async () => {
+  try {
+    await _mongoose.default.connect(process.env.CONNECTIONSTRING, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+  } catch (error) {}
+};
 
+databaseConnection();
 const db = _mongoose.default.connection;
 db.on('error', console.error.bind(console, 'connection error'));
-db.once('open', function () {
-  console.log('Connected');
+db.once('open', function () {// console.log('Connected');
 }); //models

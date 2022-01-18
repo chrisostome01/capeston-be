@@ -25,3 +25,9 @@ const PORT = process.env.PORT || 3500;
 /* ===== End:: comment routes ============ */ 
 
 app.listen(PORT , () => console.log(`Server running on port ${PORT}`));
+
+
+export const serverExport = () =>{
+   return  app ;
+}
+

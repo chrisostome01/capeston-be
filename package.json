@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "babel ./controllers/commentController.js -d ./controllers/controller-babel/",
+    "build": "babel ./controllers/blogController.js -d ./controllers/controller-babel/ ",
     "start": "node dist/index.js",
     "compileAll": "babel index.js -d ./dist && babel ./controllers/* -d ./controllers/controller-babel/ && babel ./routes/* -d ./routes/routes-babel/  && babel ./models/* -d ./models/models-babel/ && babel ./middlewares/* -d ./middlewares/middlewares-babel/",
-    "dev": "npm run build && nodemon dist/index.js"
+    "dev": "npm run build && nodemon dist/index.js ",
+    "test": "jest --watch index.test.js --detectOpenHandles --coverage"    
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +28,8 @@
     "@babel/cli": "^7.16.7",
     "@babel/core": "^7.16.7",
     "@babel/preset-env": "^7.16.7",
-    "nodemon": "^2.0.15"
+    "jest": "^27.4.7",
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.1"
   }
 }

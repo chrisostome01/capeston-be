@@ -1,5 +1,10 @@
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.serverExport = void 0;
+
 var _express = _interopRequireDefault(require("express"));
 
 var _bodyParser = _interopRequireDefault(require("body-parser"));
@@ -37,3 +42,9 @@ app.use('/api/v1/comment', _commentRoute.default);
 /* ===== End:: comment routes ============ */
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const serverExport = () => {
+  return app;
+};
+
+exports.serverExport = serverExport;
