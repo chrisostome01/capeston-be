@@ -15,89 +15,13 @@ var _dotenv = _interopRequireDefault(require("dotenv"));
 
 var _jsonwebtoken = _interopRequireDefault(require("jsonwebtoken"));
 
-var _joi = _interopRequireDefault(require("joi"));
+var _validation = require("../../validation/validation.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /* ==================== Start:: imports =================== */
 _dotenv.default.config();
 /* ==================== End:: imports ==================== */
-
-/* ==================== Start:: Valiadation ==================== */
-
-
-const loginValidation = formData => {
-  const schema = _joi.default.object({
-    Email: _joi.default.string().email({
-      minDomainSegments: 2,
-      tlds: {
-        allow: ['com', 'net']
-      }
-    }).required().messages({
-      'string.empty': `"a" cannot be an empty field`
-    }),
-    Password: _joi.default.string().required()
-  });
-
-  try {
-    const value = schema.validate(formData, {
-      abortEarly: false
-    });
-    return value;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const registerValidation = formData => {
-  const schema = _joi.default.object({
-    Email: _joi.default.string().email({
-      minDomainSegments: 2,
-      tlds: {
-        allow: ['com', 'net']
-      }
-    }).required().messages({
-      'string.empty': `"a" cannot be an empty field`
-    }),
-    password: _joi.default.string().min(6).alphanum().required(),
-    Username: _joi.default.string().min(6).required(),
-    Fullname: _joi.default.string().min(5).required()
-  });
-
-  try {
-    const value = schema.validate(formData, {
-      abortEarly: false
-    });
-    return value;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const updateValidation = formData => {
-  const schema = _joi.default.object({
-    Email: _joi.default.string().email({
-      minDomainSegments: 2,
-      tlds: {
-        allow: ['com', 'net']
-      }
-    }).messages({
-      'string.empty': `"a" cannot be an empty field`
-    }),
-    Username: _joi.default.string().min(6),
-    Fullname: _joi.default.string().min(5)
-  });
-
-  try {
-    const value = schema.validate(formData, {
-      abortEarly: false
-    });
-    return value;
-  } catch (error) {
-    console.log(error);
-  }
-};
-/* ==================== End:: Valiadation ==================== */
 
 /* =========== Start:: Getting all users ========== */
 
@@ -106,9 +30,13 @@ const selectAllUsers = async (req, res) => {
   try {
     let limitNumber = req.query.limit;
     const users = await _Users.default.find({}).limit(limitNumber);
-    res.json(users);
+    res.status(200).json({
+      "data": users
+    });
   } catch (error) {
-    console.log(error);
+    res.status(500).json({
+      "error": error.message
+    });
   }
 };
 /* =========== end:: Getting all users ============ */
@@ -123,7 +51,7 @@ const getSpacificUser = async (req, res) => {
 
   if (username.trim() === '' || username.trim() === null) {
     res.status(400).json({
-      'message': "Bad request"
+      'error': "Bad request"
     });
     return;
   }
@@ -136,7 +64,7 @@ const getSpacificUser = async (req, res) => {
 
     if (userFound.length == 0) {
       res.status(404).json({
-        'message': "User does not exist"
+        'error': "User does not exist"
       });
       return;
     } else {
@@ -146,7 +74,7 @@ const getSpacificUser = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      "message": "Server error"
+      "error": error.message
     });
   }
 };
@@ -167,7 +95,7 @@ const createNewUser = async (req, res) => {
   const emailIsVerified = false;
   const {
     error
-  } = registerValidation({
+  } = (0, _validation.registerValidation)({
     Email,
     password,
     Username,
@@ -200,12 +128,15 @@ const createNewUser = async (req, res) => {
     });
     const savedUser = await newUser.save();
     res.status(200).json({
-      "userId": savedUser._id
+      "data": {
+        Username,
+        Email,
+        Fullname
+      }
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
-      "error": "Server error"
+      "error": error.message
     });
   }
 };
@@ -224,7 +155,7 @@ const login = async (req, res) => {
   } = req.body;
   const {
     error
-  } = loginValidation({
+  } = (0, _validation.loginValidation)({
     Email,
     Password
   });

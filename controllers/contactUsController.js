@@ -1,31 +1,9 @@
 /* ==================== Start:: imports =================== */ 
 import db from '../../connection/connection-babel/connection';
 import contactUs from '../../models/models-babel/ContactUs.js';
-import Joi from 'joi';
+import { contactValidation } from "../../validation/validation.js"
 /* ==================== End:: imports =================== */ 
 
-/* ===== Start:: Validation ===== */ 
-const contactValidation = (data) => {
-    const schema = Joi.object({
-        comment: Joi.string()
-                .min(9).required(),
-        email: Joi.string() 
-                .min(9)
-                .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-                .required(),
-        subject: Joi.string()
-                .min(9)
-                .required(),
-    });
-
-    try {
-        const value = schema.validate(data , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
-}
-/* ===== End:: Validation ===== */ 
 
 /* ===== Start:: Inserting new contact ===== */ 
 const creatNewContact = async (req,res) => {
@@ -47,7 +25,7 @@ const creatNewContact = async (req,res) => {
         const savedContact = await newContact.save();
         return res.status(200).json({"data" : savedContact});
     } catch (error) {
-        return res.status(500).json({"error" : "Server error"})
+        return res.status(500).json({"error" :  error.message})
     }
    
 }
@@ -62,7 +40,7 @@ const getContact = async (req,res) => {
         if(!contactData) return res.status(200).json({"data" : null});
         return res.status(200).json({"data" : contactData})                 
     } catch (error) {
-        res.status(500).json({"error" : "Server error"});
+        res.status(500).json({"error" : error.message});
     }
 }
 /* ===== End:: Getting contacts ===== */ 

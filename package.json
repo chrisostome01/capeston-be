@@ -4,15 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "babel ./controllers/blogController.js -d ./controllers/controller-babel/ ",
-    "start": "node dist/index.js",
-    "compileAll": "babel index.js -d ./dist && babel ./controllers/* -d ./controllers/controller-babel/ && babel ./routes/* -d ./routes/routes-babel/  && babel ./models/* -d ./models/models-babel/ && babel ./middlewares/* -d ./middlewares/middlewares-babel/",
-    "dev": "npm run build && nodemon dist/index.js ",
-    "test": "jest --watch index.test.js --detectOpenHandles --coverage"    
+    "build": "babel controllers/contactUsController.js -d controllers/controller-babel/ ",
+    "start": "nodemon --exec npm run dev",
+    "dev": "babel-node index.js"
+
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-core": "^7.0.0-bridge.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.1",
     "date-fns": "^2.28.0",
@@ -25,11 +25,13 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.16.7",
+    "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.7",
-    "@babel/preset-env": "^7.16.7",
-    "jest": "^27.4.7",
-    "nodemon": "^2.0.15",
-    "supertest": "^6.2.1"
+    "@babel/node": "^7.16.8",
+    "@babel/plugin-transform-runtime": "^7.16.8",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/runtime": "^7.16.7",
+    "nodemon": "^2.0.15"
   }
 }

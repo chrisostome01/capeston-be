@@ -9,50 +9,19 @@ var _connection = _interopRequireDefault(require("../../connection/connection-ba
 
 var _ContactUs = _interopRequireDefault(require("../../models/models-babel/ContactUs.js"));
 
-var _joi = _interopRequireDefault(require("joi"));
+var _validation = require("../../validation/validation.js");
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /* ==================== Start:: imports =================== */
 
 /* ==================== End:: imports =================== */
 
-/* ===== Start:: Validation ===== */
-
-
-const contactValidation = data => {
-  const schema = _joi.default.object({
-    comment: _joi.default.string().min(9).required(),
-    email: _joi.default.string().min(9).email({
-      minDomainSegments: 2,
-      tlds: {
-        allow: ['com', 'net']
-      }
-    }).required(),
-    subject: _joi.default.string().min(9).required()
-  });
-
-  try {
-    const value = schema.validate(data, {
-      abortEarly: false
-    });
-    return value;
-  } catch (error) {
-    console.log(error);
-  }
-};
-/* ===== End:: Validation ===== */
-
 /* ===== Start:: Inserting new contact ===== */
-
-
 const creatNewContact = async (req, res) => {
   const {
     error
-  } = contactValidation(req.body);
+  } = (0, _validation.contactValidation)(req.body);
   /* ===== Start:: validation ====== */
 
   if (error) return res.status(400).json({
@@ -75,12 +44,12 @@ const creatNewContact = async (req, res) => {
     });
     const savedContact = await newContact.save();
     return res.status(200).json({
-      "contactId": savedContact._id
+      "data": savedContact
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      "error": "Server error"
+      "error": error.message
     });
   }
 };
@@ -104,7 +73,7 @@ const getContact = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      "error": "Server error"
+      "error": error.message
     });
   }
 };
