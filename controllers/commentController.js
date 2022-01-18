@@ -1,7 +1,7 @@
 /* ==================== Start:: imports =================== */ 
-    import db from '../../connection/connection-babel/connection';
-    import Comment from '../../models/models-babel/Comment';
-    import BlogSchema from '../../models/models-babel/Blogs';
+    import db from '../connection/connection';
+    import Comment from '../models/Comment';
+    import BlogSchema from '../models/Blogs';
     import Joi from 'joi';
 /* ==================== End:: imports =================== */ 
 

@@ -1,13 +1,13 @@
 {
-  "name": "capstone_be",
+  "name": "node",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "babel controllers/contactUsController.js -d controllers/controller-babel/ ",
     "start": "nodemon --exec npm run dev",
-    "dev": "babel-node index.js"
-
+    "dev": "babel-node index.js",
+    "test": "jest --watch index.test.js --detectOpenHandles --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.2.2",
     "mongoose": "^6.1.5",
+    "supertest": "^6.2.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
@@ -32,6 +33,7 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.16.8",
     "@babel/runtime": "^7.16.7",
+    "jest": "^27.4.7",
     "nodemon": "^2.0.15"
   }
 }

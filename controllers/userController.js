@@ -1,10 +1,10 @@
 /* ==================== Start:: imports =================== */ 
-import db from '../../connection/connection-babel/connection';
-import Users from '../../models/models-babel/Users';
+import db from '../connection/connection';
+import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { registerValidation,loginValidation  } from "../../validation/validation.js"
+import { registerValidation,loginValidation  } from "../validation/validation"
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 

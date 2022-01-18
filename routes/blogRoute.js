@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import * as authentication from '../../middlewares/middlewares-babel/authenticate.js'
-import * as blog from '../../controllers/controller-babel/blogController.js';
+import * as authentication from '../middlewares/authenticate.js'
+import * as blog from '../controllers/blogController.js';
 
 const router =  express.Router();
 router.use(bodyParser.json());

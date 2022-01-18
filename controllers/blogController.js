@@ -1,5 +1,5 @@
-import db from '../../connection/connection-babel/connection';
-import BlogSchema from '../../models/models-babel/Blogs';
+import db from '../connection/connection';
+import BlogSchema from '../models/Blogs';
 import Joi from 'joi';
 
 

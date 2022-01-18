@@ -1,7 +1,7 @@
 /* ==================== Start:: imports =================== */ 
-import db from '../../connection/connection-babel/connection';
-import contactUs from '../../models/models-babel/ContactUs.js';
-import { contactValidation } from "../../validation/validation.js"
+import db from '../connection/connection';
+import contactUs from '../models/ContactUs.js';
+import { contactValidation } from "../validation/validation.js"
 /* ==================== End:: imports =================== */ 
 
 
