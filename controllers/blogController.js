@@ -64,7 +64,7 @@ const getSpacificBlog = async (req , res) => {
 
         let data = await BlogSchema.find(query);
         if(data.length != 0){
-            res.status(200).json(data);
+            res.status(200).json({'message' : "Found" , "data" : data});
             return;
         }
         else{
@@ -123,7 +123,7 @@ const deleteBlog = async (req , res) => {
 
         let data = await BlogSchema.deleteOne(query);
         if(data.deletedCount === 1 ){
-            res.status(200).json({"success" : `blog with this id ${blogId} have been deleted`});
+            res.status(200).json({"message" : `blog with this id ${blogId} have been deleted`});
             return;
         }
         else{
@@ -150,7 +150,7 @@ const updateBlog = async (req , res) => {
             { $set:bodyData });
         
         if(data){
-            res.status(200).json({"message" : "Updated" , "data" : `${blogId}` });
+            res.status(200).json({"message" : "Updated" , "data" : `${data}` });
             return;            
         }
         else{
