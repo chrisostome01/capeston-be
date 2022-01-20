@@ -24,20 +24,8 @@ const usersSchema = new mongoose.Schema({
     userId:{
         type: Number,
     },
-    latitude:{
-        type: Number,
-    },
-    longitude:{
-        type: Number,
-    },
-    parentId:{
-        type: Number,
-    },
     profile:{
         type: String,
-    },
-    parentId:{
-        type: Number,
     },
     userType:{
         type: String

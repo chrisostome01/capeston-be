@@ -4,7 +4,7 @@ import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { updateValidation , registerValidation } from "../validation/validation"
+import { updateValidation , registerValidation, loginValidation} from "../validation/validation"
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
@@ -15,8 +15,9 @@ dotenv.config();
 const selectAllUsers = async (req , res) => {
   
     try {
-        let limitNumber = req.query.limit;
+        let limitNumber = req.query.limit != "" ||  req.query.limit != null ? req.query.limit  : 6 ;
         const users =  await Users.find({}).limit(limitNumber);
+        if(users.length === 0 ) return res.status(404).json({"error" : "No users is currently registered"});
         res.status(200).json({"data" : users});  
     } catch (error) {
         res.status(500).json({"error" : error.message})
@@ -115,6 +116,7 @@ const updateUser = async (req , res) => {
         
         let id = req.user._id;
         req.body._id = id;
+        if(req.body.userType) return res.status(401).json({"error":"You can not update user type"})
         let updated = await Users.findOneAndUpdate(
             {_id : id },
             {$set: req.body} );
@@ -122,7 +124,7 @@ const updateUser = async (req , res) => {
             const updateInfo = await Users.findOne({_id : id});
             const resUsername = updateInfo.Username ;
             const resEmail = updateInfo.Email; 
-            const resFullname = updateInfo.Username 
+            const resFullname = updateInfo.Fullname 
             res.status(200).json({"message" : "Updated" , "data" : { Username : resUsername , Email :resEmail ,Fullname :resFullname } });
             return;         
         }        

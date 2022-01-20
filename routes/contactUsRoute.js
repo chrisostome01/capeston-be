@@ -46,7 +46,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  * @swagger
  * tags:
  *  name: Contact
- *  description: Commenting api
+ *  description: Contacting api
  * 
  * */ 
 
@@ -64,7 +64,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *        description: To return a spacific limits of blogs
  *        required: false
  *        schema:
- *          type: integer
+ *          type: string
  *      - name: limit
  *        in: query
  *        description: Blog id to retrive comment for
@@ -118,7 +118,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *                    description: This holds comment
  *    responses:
  *        200: 
- *          description: Queries got sent
+ *          description: Contanct sent response
  *          content:
  *            application/json:
  *                schema:

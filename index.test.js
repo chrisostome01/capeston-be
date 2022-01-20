@@ -90,7 +90,7 @@ describe(" ======================== Blog Test ===========================",  () 
             .expect(200)
             .then((res) => {
                 expect(res.body).toEqual(expect.objectContaining({
-                    "data" : expect.any(String),
+                    "data" : expect.any(Object),
                     "message": expect.any(String)
                 }))
             });
@@ -110,7 +110,7 @@ describe(" ======================== Blog Test ===========================",  () 
     it('DELETE /blog  ---> found  ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blog/delete?blogId=61e661debca08a2c864882e9`)
+            .delete(`/api/v1/blog/delete?blogId=61e6644231cfc57a297d7b37`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(200)
             .then((res) => {
@@ -162,8 +162,11 @@ describe(" ======================== Commenting api Test=========================
 
 describe(" ======================== Contacting api Test=========================== \n \n ",  () => {
     it('GET /contacting ----> Arrays of objects  ===(HAPPY PART)===',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDI2NzM3NTJ9.pKlbBorUXkjaGRQUidYjNOMJGGithMiTxKTUzz8p1LU";
+        
         return await request(app)
             .get('/api/v1/contact')
+            .set({ 'auth-token': token, Accept: 'application/json' })
             .expect('Content-Type',/json/)
             .expect(200)
             .then((response) => {
@@ -176,13 +179,11 @@ describe(" ======================== Contacting api Test=========================
                 });
        
     });
-    it('Post /Contacting ----> ===(HAPPY PART)===',  async () => {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+    it('Post /Contacting  ===(HAPPY PART)===',  async () => {
         return await request(app)
             .post('/api/v1/contact/send')
-            .set({ 'auth-token': token, Accept: 'application/json' })
             .send({
-                "comment" : "Hello",
+                "comment" : "New contscts",
                 "email" : "sezeranochrisostom123@gmail.com",
                 "subject" : "Just testing"
             })
