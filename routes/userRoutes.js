@@ -15,7 +15,7 @@ router.get('/', users.selectAllUsers);
 
 /* ==================== Start:: Get spacific user ========================= */ 
 
-// router.get('/find',users.getSpacificUser);
+router.get('/find',authentication.admin,users.getSpacificUser);
 
 /* ========================= End:: Get spacific user ====================== */ 
 
