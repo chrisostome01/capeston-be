@@ -64,6 +64,15 @@ export const registerValidation = (formData) => {
     }
 }
 
+export const validateCommentData = (data) =>  {
+        const formSchema = Joi.object({
+            comment: Joi.string().required(),
+            blogId:Joi.required()
+        })
+
+        const value = formSchema.validate(data , { abortEarly: false });
+        return value ;
+}
 
 export const updateValidation = (formData) => {
     const schema = Joi.object({

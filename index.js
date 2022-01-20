@@ -6,6 +6,8 @@ import contactUs  from './routes/contactUsRoute.js';
 import commentRoute  from './routes/commentRoute.js';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import sendEmail from './functions/sendEmail.js';
+
 
 const app = express();
 const PORT = process.env.PORT || 3500;
@@ -47,6 +49,8 @@ app.use("/api-doc",swaggerUI.serve ,swaggerUI.setup(specs));
    app.use('/api/v1/comment', commentRoute);
 /* ===== End:: comment routes ============ */ 
 
+
+// sendEmail('sezeranochrisostom123@gmail.com');
 app.listen(PORT , () => console.log(`Server running on port ${PORT}`));
 
 

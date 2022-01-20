@@ -3,20 +3,8 @@
     import Comment from '../models/Comment';
     import BlogSchema from '../models/Blogs';
     import Joi from 'joi';
+    import { validateCommentData } from '../validation/validation'
 /* ==================== End:: imports =================== */ 
-
-/* ================== Start:: validation ================ */ 
-const validateCommentData = (data) =>  {
-    const formSchema = Joi.object({
-        comment: Joi.string().required(),
-        blogId:Joi.required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-/* =================== End:: validation ================= */ 
-
 
 /* ================== Start:: Creating Commenting ================ */ 
 const newCommenting = async (req,res) => {
@@ -60,7 +48,7 @@ const gettingComment = async (req,res) => {
             res.status(404).json({"error" : 'No comments found'});
         }
     } catch (error) {
-        res.status(500).json({ "error" : 'Server error' });
+        res.status(500).json({ "error" : error.message });
     }
 }
 /* =================== End:: Getting Commenting ================= */ 

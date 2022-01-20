@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 const databaseConnection = async () =>{
     try {
         await mongoose.connect(process.env.CONNECTIONSTRING , {useNewUrlParser: true , useUnifiedTopology: true });
-        console.log('Connected');
+        // console.log('Connected');
     } catch (error) {
         console.log('Database can be connected' , error.message);
     }

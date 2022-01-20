@@ -3,7 +3,7 @@ const request = require("supertest");
 const app   =  require("./index.js").serverExport();
 
 jest.setTimeout(12000000);
-describe("Blogs crud",  () => {
+describe(" ======================== Blogs crud Test ===========================",  () => {
     var id = '';
     it('GET /blog ----> Arrays with objects',  async () => {
         return await request(app)
@@ -119,5 +119,44 @@ describe("Blogs crud",  () => {
                     "message" : expect.any(String)
                 }))
             });
+    });
+})
+
+describe(" ======================== Commenting  Test=========================== \n \n ",  () => {
+    it('GET /comments ----> Arrays of objects',  async () => {
+        return await request(app)
+            .get('/api/v1/comment?limit=2&q=61e65fe8d166e403df0559f1')
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Array)
+                        }
+                    ));
+                });
+       
+    });
+    it('Post /comment ----> ',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .post('/api/v1/comment')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .send({
+                "comment" : "Hello",
+                "blogId" : "61e65fe8d166e403df0559f1"
+            })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
     });
 })
