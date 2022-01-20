@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "babel controllers/contactUsController.js -d controllers/controller-babel/ ",
-    "start": "babel-node index.js",
+    "start": "node index.js",
     "dev": "nodemon --exec npm run compile" ,
     "compile": "babel-node index.js",
     "test": "jest --watch index.test.js --detectOpenHandles --coverage"
