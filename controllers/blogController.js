@@ -1,33 +1,8 @@
 import db from '../connection/connection';
 import BlogSchema from '../models/Blogs';
 import Joi from 'joi';
+import { validateUpdateData , validateBlogData  } from '../validation/validation';
 
-
-/* ============ Start:: validation ================== */
-const validateBlogData = (data) =>  {
-    const formSchema = Joi.object({
-        Subtitle: Joi.string().required().min(2),
-        Title: Joi.string().required().min(3),
-        Description:Joi.string().required(),
-        postBanner:Joi.string().required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-const validateUpdateData = (data) =>  {
-    const formSchema = Joi.object({
-        Subtitle: Joi.string().min(2),
-        Title: Joi.string().min(3),
-        Description:Joi.string(),
-        postBanner:Joi.string(),
-        _id:Joi.string().required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-/* ============ End:: Validation ==================== */
 
 /* ============ Start:: Getting all Blogs but with limit ============= */
 const getAllBlogs = async (req ,  res) => {

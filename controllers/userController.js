@@ -4,7 +4,7 @@ import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { updateValidation } from "../validation/validation"
+import { updateValidation , registerValidation } from "../validation/validation"
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
@@ -40,11 +40,10 @@ const getSpacificUser = async (req , res) => {
             return;
         }
         else{
-            res.status(200).json(userFound);
+            res.status(200).json({"message" : "found" ,'data' : userFound});
             return;
         }
     } catch (error) {
-        console.log(error);
         res.status(500).json({"error" : error.message });
     }
 }
@@ -93,15 +92,15 @@ const login = async (req,res) => {
 
     try {  
         const emailExist = await Users.findOne({Email : Email});
-        if(!emailExist) return res.status(400).json({"error":"Unknown user email "});
+        if(!emailExist) return res.status(400).json({"error":"Invalid credentials"});
 
         const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
-        if(!passwordMatch) return res.status(401).json({"error":"Wrong password"});
+        if(!passwordMatch) return res.status(401).json({"error":"Invalid credentials"});
         // setting token
         const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
         res.header('auth-token',token).status(200).json({"message" : "Logged in" , "token" : token });
     } catch (error) {     
-        res.status(500).json({"error":"Server error"});    
+        res.status(500).json({"error": error.message});    
     }
 
 }
@@ -115,7 +114,7 @@ const updateUser = async (req , res) => {
     try {      
         
         let id = req.user._id;
-     
+        req.body._id = id;
         let updated = await Users.findOneAndUpdate(
             {_id : id },
             {$set: req.body} );
@@ -134,8 +133,7 @@ const updateUser = async (req , res) => {
         }
     }
     catch(error){
-        console.log(error);
-        res.status(500).json({"error" : "Server error"});
+        res.status(500).json({"error" : error.message});
     }
 }
 /* ============== End:: Update Blog  ============= */

@@ -22,8 +22,8 @@ const options = {
            version: "1.0.1"
        },
        servers:[{
-         surl: `http://localhost:${PORT}`,
-         url: `https://capstonetyu.herokuapp.com/`
+         url: `http://localhost:${PORT}`,
+         surl: `https://capstonetyu.herokuapp.com/`
        }],      
    },
    apis: ["./routes/*.js"]
@@ -51,7 +51,7 @@ app.use("/api-doc",swaggerUI.serve ,swaggerUI.setup(specs));
 /* ===== End:: comment routes ============ */ 
 
 
-// sendEmail('sezeranochrisostom123@gmail.com');
+// sendEmail('igorkabirigi@gmail.com');
 app.listen(PORT , () => console.log(`Server running on port ${PORT}`));
 
 

@@ -22,8 +22,6 @@ export const contactValidation = (data) => {
     }
 }
 
-
-
 export const loginValidation = (formData) => {
     const schema = Joi.object({
         Email : Joi.string()
@@ -91,4 +89,28 @@ export const updateValidation = (formData) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+export const validateBlogData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().required().min(2),
+        Title: Joi.string().required().min(3),
+        Description:Joi.string().required(),
+        postBanner:Joi.string().required()
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
+export const validateUpdateData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().min(2),
+        Title: Joi.string().min(3),
+        Description:Joi.string(),
+        postBanner:Joi.string(),
+        _id:Joi.string().required()
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
 }

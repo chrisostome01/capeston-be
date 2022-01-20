@@ -140,7 +140,7 @@ describe(" ======================== Commenting  Test=========================== 
     it('Post /comment ----> ',  async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .post('/api/v1/comment')
+            .post('/api/v1/comment/create')
             .set({ 'auth-token': token, Accept: 'application/json' })
             .send({
                 "comment" : "Hello",
