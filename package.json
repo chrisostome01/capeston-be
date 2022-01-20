@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "babel controllers/contactUsController.js -d controllers/controller-babel/ ",
-    "start": "nodemon --exec npm run dev",
-    "dev": "babel-node index.js",
+    "start": "babel-node index.js",
+    "dev": "nodemon --exec npm run compile" ,
+    "compile": "babel-node index.js",
     "test": "jest --watch index.test.js --detectOpenHandles --coverage"
   },
   "author": "",
@@ -26,12 +27,18 @@
     "supertest": "^6.2.1",
     "swagger-jsdoc": "^6.1.0",
     "swagger-ui-express": "^4.3.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "@babel/node": "^7.16.8",
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.8",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.16.8",
+    "@babel/runtime": "^7.16.7"
   },
   "devDependencies": {
     "@babel/cli": "^7.16.8",
     "@babel/core": "^7.16.7",
-    "@babel/node": "^7.16.8",
     "@babel/plugin-transform-runtime": "^7.16.8",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.16.8",
