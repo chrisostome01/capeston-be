@@ -150,7 +150,7 @@ const updateBlog = async (req , res) => {
             { $set:bodyData });
         
         if(data){
-            res.status(200).json({"message" : "Updated" , "data" : `${data}` });
+            res.status(200).json({"message" : "Updated" , "data" : data });
             return;            
         }
         else{

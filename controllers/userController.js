@@ -4,7 +4,7 @@ import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { registerValidation,loginValidation  } from "../validation/validation"
+import { updateValidation } from "../validation/validation"
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
@@ -109,8 +109,7 @@ const login = async (req,res) => {
 
 /* ============ Start:: Update Blog  ============= */
 const updateUser = async (req , res) => {
-    const { Username , Email ,Fullname } =  req.body;
-    const {error} = updateValidation({ Email, Username, Fullname } );
+    const {error} = updateValidation(req.body);
     if(error) return res.status(400).json({"error" : error.details[0].message});
 
     try {      
