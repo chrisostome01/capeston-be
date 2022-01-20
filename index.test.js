@@ -2,9 +2,9 @@ const request = require("supertest");
 const app   =  require("./index.js").serverExport();
 
 jest.setTimeout(12000000);
-describe(" ======================== Blogs crud Test ===========================",  () => {
+describe(" ======================== Blog Test ===========================",  () => {
     var id = '';
-    it('GET /blog ----> Arrays with objects',  async () => {
+    it('GET /blog ----> Arrays with objects ===(HAPPY PART)===',  async () => {
         return await request(app)
             .get('/api/v1/blog?limit=1')
             .expect('Content-Type',/json/)
@@ -25,7 +25,7 @@ describe(" ======================== Blogs crud Test ==========================="
                 });
        
     });
-    it('POST /api/v1/blog/create ---> without token', async () => {
+    it('POST /api/v1/blog/create ---> without token ===(SAD PART)===', async () => {
         return await request(app)
             .post('/api/v1/blog/create')
             .expect('Content-Type',/json/)
@@ -37,7 +37,7 @@ describe(" ======================== Blogs crud Test ==========================="
                     }));             
                 });        
     });
-    it('POST /api/v1/blog/create ---> with token', async () => {
+    it('POST /api/v1/blog/create ---> with token ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
             .post('/api/v1/blog/create')
@@ -60,7 +60,7 @@ describe(" ======================== Blogs crud Test ==========================="
                 id = response.id;    
             });
     });
-    it(`GET /blog/find/blogId  ---> Object`, async () => {
+    it(`GET /blog/find/blogId  ---> Object ===(HAPPY PART)===`, async () => {
         return await request(app)
             .get(`/api/v1/blog/find?blogId=61e65fe8d166e403df0559f1`)
             .expect('Content-Type',/json/)
@@ -76,7 +76,7 @@ describe(" ======================== Blogs crud Test ==========================="
                  );  
             })           
     });
-    it('PUT /blog ---> Object blogs', async () => {
+    it('PUT /blog ---> Object blogs ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
             .put('/api/v1/blog/update')
@@ -95,7 +95,7 @@ describe(" ======================== Blogs crud Test ==========================="
                 }))
             });
     });
-    it('delete /blog  ---> Not found', async () => {
+    it('DELETE /blog  ---> Not found ===(SAD PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
             .delete(`/api/v1/blog/delete?blogId=61e134c7481b811737ea17bf`)
@@ -107,7 +107,7 @@ describe(" ======================== Blogs crud Test ==========================="
                 }))
             });
     });
-    it('delete /blog  ---> found', async () => {
+    it('DELETE /blog  ---> found  ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
             .delete(`/api/v1/blog/delete?blogId=61e661debca08a2c864882e9`)
@@ -121,7 +121,7 @@ describe(" ======================== Blogs crud Test ==========================="
     });
 })
 
-describe(" ======================== Commenting  Test=========================== \n \n ",  () => {
+describe(" ======================== Commenting api Test=========================== \n \n ",  () => {
     it('GET /comments ----> Arrays of objects',  async () => {
         return await request(app)
             .get('/api/v1/comment?limit=2&q=61e65fe8d166e403df0559f1')
@@ -145,6 +145,46 @@ describe(" ======================== Commenting  Test=========================== 
             .send({
                 "comment" : "Hello",
                 "blogId" : "61e65fe8d166e403df0559f1"
+            })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });
+})
+
+describe(" ======================== Contacting api Test=========================== \n \n ",  () => {
+    it('GET /contacting ----> Arrays of objects  ===(HAPPY PART)===',  async () => {
+        return await request(app)
+            .get('/api/v1/contact')
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Array)
+                        }
+                    ));
+                });
+       
+    });
+    it('Post /Contacting ----> ===(HAPPY PART)===',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .post('/api/v1/contact/send')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .send({
+                "comment" : "Hello",
+                "email" : "sezeranochrisostom123@gmail.com",
+                "subject" : "Just testing"
             })
             .expect('Content-Type',/json/)
             .expect(200)

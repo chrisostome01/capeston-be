@@ -37,7 +37,7 @@ const getContact = async (req,res) => {
 
     try {
         const contactData = await contactUs.find({}).limit(limit);
-        if(!contactData) return res.status(200).json({"data" : null});
+        if(!contactData) return res.status(404).json({"error" : "No contact found"});
         return res.status(200).json({"data" : contactData})                 
     } catch (error) {
         res.status(500).json({"error" : error.message});

@@ -50,7 +50,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  * @swagger
  * /api/v1/comment:
  *  get:
- *    Comment: Returns list comments on spacific blog
+ *    summary: Returns list comments on spacific blog
  *    tags:
  *    - "Comment"
  *    parameters:
