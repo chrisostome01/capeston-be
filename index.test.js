@@ -2,7 +2,7 @@ const request = require("supertest");
 const app   =  require("./index.js").serverExport();
 
 jest.setTimeout(12000000);
-describe(" ======================== Blog Test ===========================",  () => {
+describe(" ======================== BLOG API TEST =========================== \n \n",  () => {
     var id = '';
     it('GET /blog ----> Arrays with objects ===(HAPPY PART)===',  async () => {
         return await request(app)
@@ -110,7 +110,7 @@ describe(" ======================== Blog Test ===========================",  () 
     it('DELETE /blog  ---> found  ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blog/delete?blogId=61e6644231cfc57a297d7b37`)
+            .delete(`/api/v1/blog/delete?blogId=61e6cfe97e1ebecd8ba253aa`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(200)
             .then((res) => {
@@ -121,7 +121,7 @@ describe(" ======================== Blog Test ===========================",  () 
     });
 })
 
-describe(" ======================== Commenting api Test=========================== \n \n ",  () => {
+describe(" ======================== COMMENTING API TEST =========================== \n \n ",  () => {
     it('GET /comments ----> Arrays of objects',  async () => {
         return await request(app)
             .get('/api/v1/comment?limit=2&q=61e65fe8d166e403df0559f1')
@@ -160,7 +160,7 @@ describe(" ======================== Commenting api Test=========================
     });
 })
 
-describe(" ======================== Contacting api Test=========================== \n \n ",  () => {
+describe(" ======================== CONTACTING API TEST =========================== \n \n ",  () => {
     it('GET /contacting ----> Arrays of objects  ===(HAPPY PART)===',  async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDI2NzM3NTJ9.pKlbBorUXkjaGRQUidYjNOMJGGithMiTxKTUzz8p1LU";
         
@@ -194,6 +194,229 @@ describe(" ======================== Contacting api Test=========================
                     expect.objectContaining(
                         {
                             "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });
+})
+
+describe(" \n \n  ================================ AUTH API TEST ================================ \n \n ",  () => {
+    it('GET /Users  === (SAD PART) === WITHOUT  ADMINTOKEN',  async () => {
+         return await request(app)
+            .get('/api/v1/user')
+            .expect('Content-Type',/json/)
+            .expect(401)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('GET /Users  === (HAPPY PART) === WITH ADMINTOKEN',  async () => {
+        const adminToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDI2NzM3NTJ9.pKlbBorUXkjaGRQUidYjNOMJGGithMiTxKTUzz8p1LU";
+        
+        return await request(app)
+            .get('/api/v1/user')
+            .set({ 'auth-token': adminToken, Accept: 'application/json' })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });
+    it('POST /login  ===(SAD PART)=== WITH WRONG CREDENTIALS',  async () => {
+        return await request(app)
+            .post('/api/v1/user/login')
+            .send({
+                "Email" : "sezeranochrisostom123@gmail.com",
+                "Password" : "12345askdjfbaksdu"
+            })
+            .expect('Content-Type',/json/)
+            .expect(401)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('POST /login  ===(HAPPY PART)=== WITH VALID CREDENTIALS',  async () => {
+        return await request(app)
+            .post('/api/v1/user/login')
+            .send({
+                "Email" : "sezeranochrisostom123@gmail.com",
+                "Password" : "123456789"
+            })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "token": expect.any(String),
+                            "message": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('POST /register  ===(SAD PART)=== WITH USED EMAIL',  async () => {
+        return await request(app)
+            .post('/api/v1/user/register')
+            .send({
+                "Email" : "sezeranochrisostom123@gmail.com",
+                "Password" : "123456789"
+            })
+            .expect('Content-Type',/json/)
+            .expect(400)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('POST /register  ===(SAD PART)=== WITH NEW EMAIL',  async () => {
+        return await request(app)
+            .post('/api/v1/user/register')
+            .send({
+                "Email" : "jhhodoe123@gmail.com",
+                "password" : "123456789",
+                "Username" : "Jhondoe1234",
+                "Fullname": "Jean done"
+            })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });    
+    it('PUT /USER =====(HAPPY PART)===== UPDATING WITHOUT USER TOKEN',  async () => {
+        return await request(app)
+            .put('/api/v1/user/update')
+            .send({
+                "Username" : "titoNewName"
+            })
+            .expect('Content-Type',/json/)
+            .expect(401)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('PUT /USER =====(HAPPY PART)===== UPDATING WITH USER TOKEN',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .put('/api/v1/user/update')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .send({
+                "Username" : "titoNewName"
+            })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });
+    it('PUT /USER =====(HAPPY PART)===== UPDATING WITH TOKEN BUT WITH UNEDITABLE KEY ELEMENT',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .put('/api/v1/user/update')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .send({
+                "userType" : "newType"
+            })
+            .expect('Content-Type',/json/)
+            .expect(400)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('GET /USER =====(HAPPY PART)===== FIND USER BY USERNAME',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .get('/api/v1/user/find?username=titoNewName')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .expect('Content-Type',/json/)
+            .expect(200)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "message": expect.any(String),
+                            "data": expect.any(Object)
+                        }
+                    ));
+                });
+       
+    });
+    it('GET /USER =====(SAD PART)===== FIND UNKNOW USERNAME',  async () => {
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
+        return await request(app)
+            .get('/api/v1/user/find?username=ASDFW')
+            .set({ 'auth-token': token, Accept: 'application/json' })
+            .expect('Content-Type',/json/)
+            .expect(404)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
+                        }
+                    ));
+                });
+       
+    });
+    it('GET /USER =====(SAD PART)===== WITHOUT TOKEN',  async () => {
+        return await request(app)
+            .get('/api/v1/user/find?username=ASDFW')
+            .expect('Content-Type',/json/)
+            .expect(401)
+            .then((response) => {
+                expect(response.body).toEqual(
+                    expect.objectContaining(
+                        {
+                            "error": expect.any(String)
                         }
                     ));
                 });

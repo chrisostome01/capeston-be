@@ -237,7 +237,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *    parameters:
  *      - name: auth-token
  *        in: header
- *        description: To return a spacific limits of blogs
+ *        description: Token is required here 
  *        required: true
  *        schema:
  *          type: string
@@ -265,7 +265,61 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *          application/json:
  *              schema:
  *                $ref: "#/components/schemas/error"  
- *        
+ * /api/v1/user/find:
+ *  get:
+ *    summary: Returns spacific users
+ *    tags:
+ *    - "Auth"
+ *    parameters:
+ *      - name: auth-token
+ *        in: header
+ *        description: Token is required here
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - name: username
+ *        in: query
+ *        description: Username of user is require here
+ *        required: true
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200: 
+ *        description: This is response of found user  
+ *        content:
+ *          application/json:
+ *              schema:
+ *                 type: object
+ *                 properties:
+ *                    message:
+ *                      type: string
+ *                    data:
+ *                      type: object
+ *                      properties:
+ *                         Username:
+ *                           type: string
+ *                         Email:
+ *                           type: string
+ *                         Fullname:
+ *                           type: string 
+ *      404:
+ *        description: Not found
+ *        content:
+ *          application/json:
+ *              schema:
+ *                $ref: "#/components/schemas/error" 
+ *      401:
+ *        description: Access denied
+ *        content:
+ *          application/json:
+ *              schema:
+ *                $ref: "#/components/schemas/error"     
+ *      500:
+ *        description: Server error
+ *        content:
+ *          application/json:
+ *              schema:
+ *                $ref: "#/components/schemas/error"         
  * */ 
 
 

@@ -36,12 +36,15 @@ const getSpacificUser = async (req , res) => {
     try {
         var query = { Username : username };
         const userFound = await Users.find(query);
+         
         if(userFound.length == 0){
             res.status(404).json({'error' : "User does not exist"});
             return;
         }
+        
         else{
-            res.status(200).json({"message" : "found" ,'data' : userFound});
+            const {Username , Email , Fullname} =  userFound[0] ;
+            res.status(200).json({"message" : "found" ,'data' : { Username , Email , Fullname}});
             return;
         }
     } catch (error) {
@@ -93,7 +96,7 @@ const login = async (req,res) => {
 
     try {  
         const emailExist = await Users.findOne({Email : Email});
-        if(!emailExist) return res.status(400).json({"error":"Invalid credentials"});
+        if(!emailExist) return res.status(401).json({"error":"Invalid credentials"});
 
         const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
         if(!passwordMatch) return res.status(401).json({"error":"Invalid credentials"});
