@@ -5,12 +5,10 @@ dotEnv.config();
 const sendEmail = async (req , res) => {
   if(req.subscribers.length == 0 ) return ;
 
-  var receiver = '';
-  for(let i = 0 ; i <= req.subscribers.length; i++ ){
-    receiver += `${req.subscribers[1].Email}`;
-    if( i != (req.subscribers.length - 1) ){
-      receiver += ', ';
-    }
+  var receiver = [];
+  for(let i = 0 ; i < req.subscribers.length; i++ ){
+    // req.subscribers[i];
+    receiver.push( req.subscribers[i].Email);
   }
  
     
@@ -30,10 +28,10 @@ const sendEmail = async (req , res) => {
       subject: "Hello ✔ please checkout this blog", 
       text: "Hello world?", 
       html: `
-          <h1>${req.NewBlog.Title}</h1><br><br>
+          <h1>${req.NewBlog.Title}</h1>
           <a href="http://127.0.0.1:3500/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
           <br><br>
-          <a href="https://capstonetyu.herokuapp.com/api/v1/blog/find?blogId=${req.NewBlog._id}" ></a>
+          <a href="https://capstonetyu.herokuapp.com/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
       `, 
     });
     return res.status(200).json({"data" : req.NewBlog  });
