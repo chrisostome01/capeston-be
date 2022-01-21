@@ -77,8 +77,7 @@ const createNewblog = async (req , res , next) => {
         const savedBlog = await newBlog.save();
         req.subscribers = await subscriber.find({isSubscriber : true});
         req.NewBlog = savedBlog;
-        next(); 
-         
+        return res.status(200).json({"data" : savedBlog  });
     }
     catch(error){
         res.status(500).json({"error" : error.message});

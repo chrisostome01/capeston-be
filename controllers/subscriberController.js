@@ -34,6 +34,19 @@ const addSubscriber = async (req , res) =>{
 
 
 const getSubscribers = async (req , res) =>{
+    let limitNumber = req.query.limit != null || req.query.limit != undefined ? req.query.limit : 6 ;
+
+    try {
+        const subscribers = await Subscriber.find({}).limit(limitNumber);
+        if(subscribers.length !=  0){
+            res.status(200).json(subscribers);
+        }
+        else{
+            res.status(404).json({"message" : 'No blogs found'});
+        }
+    } catch (error) {
+        res.status(500).json({ "message" : 'Server error' });
+    }
 
 }
 

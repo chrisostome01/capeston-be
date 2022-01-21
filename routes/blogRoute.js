@@ -318,7 +318,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /* =========== End:: Getting  Spacific blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.post('/create',authentication.admin,blog.createNewblog,sendEmail);
+    router.post('/create',authentication.admin,blog.createNewblog);
 /* =========== End:: Create blog ========= */
 
 /* ========== Start:: Delete blog ======== */ 
