@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes.js';
 import blogRoute  from './routes/blogRoute.js';
 import contactUs  from './routes/contactUsRoute.js';
 import commentRoute  from './routes/commentRoute.js';
+import subscribe  from './routes/subscriberRoute.js';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
 import sendEmail from './functions/sendEmail.js';
@@ -23,7 +24,8 @@ const options = {
        },
        servers:[{
          url: `http://localhost:${PORT}`,
-         surl: `https://capstonetyu.herokuapp.com/`
+       },{
+         url: `https://capstonetyu.herokuapp.com/`
        }],      
    },
    apis: ["./routes/*.js"]
@@ -50,6 +52,10 @@ app.use("/api-doc",swaggerUI.serve ,swaggerUI.setup(specs));
    app.use('/api/v1/comment', commentRoute);
 /* ===== End:: comment routes ============ */ 
 
+
+/* ===== Start:: subscribe routes ========== */ 
+   app.use('/api/v1/subscribe', subscribe);
+/* ===== End:: subscribe routes ============ */ 
 
 // sendEmail('igorkabirigi@gmail.com');
 app.listen(PORT , () => console.log(`Server running on port ${PORT}`));

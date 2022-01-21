@@ -2,6 +2,7 @@ import db from '../connection/connection';
 import BlogSchema from '../models/Blogs';
 import Joi from 'joi';
 import { validateUpdateData , validateBlogData  } from '../validation/validation';
+import subscriber from '../models/Subscriber';
 
 
 /* ============ Start:: Getting all Blogs but with limit ============= */
@@ -55,7 +56,7 @@ const getSpacificBlog = async (req , res) => {
 
 
 /* ============ Start:: Create Blog  ============= */
-const createNewblog = async (req , res) => {
+const createNewblog = async (req , res , next) => {
     const { Subtitle,Title,Description,postBanner} =  req.body;
     const { error } = validateBlogData({ Subtitle,Title,Description,postBanner }) ;
     let rate = 1;
@@ -74,11 +75,13 @@ const createNewblog = async (req , res) => {
             rate
         });
         const savedBlog = await newBlog.save();
-        res.status(200).json({"data" : savedBlog });
+        req.subscribers = await subscriber.find({isSubscriber : true});
+        req.NewBlog = savedBlog;
+        next(); 
+         
     }
     catch(error){
-        console.log(error);
-        res.status(500).json({"error" : "Server error"});
+        res.status(500).json({"error" : error.message});
     }
 }
 /* ============== End:: Create Blog  ============= */

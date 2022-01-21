@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import * as authentication from '../middlewares/authenticate.js'
 import * as blog from '../controllers/blogController.js';
+import sendEmail from '../functions/sendEmail.js';
 
 const router =  express.Router();
 router.use(bodyParser.json());
@@ -317,7 +318,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /* =========== End:: Getting  Spacific blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.post('/create',authentication.admin,blog.createNewblog);
+    router.post('/create',authentication.admin,blog.createNewblog,sendEmail);
 /* =========== End:: Create blog ========= */
 
 /* ========== Start:: Delete blog ======== */ 

@@ -100,3 +100,16 @@ export const validateUpdateData = (data) =>  {
     const value = formSchema.validate(data , { abortEarly: false });
     return value ;
 }
+export const SubscriberValidation = (data) => {
+    const formSchema = Joi.object({
+        Email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .required()
+        .messages({
+            'string.empty': `"a" cannot be an empty field`
+          })
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
