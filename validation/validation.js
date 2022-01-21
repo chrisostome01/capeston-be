@@ -14,12 +14,8 @@ export const contactValidation = (data) => {
                 .required(),
     });
 
-    try {
-        const value = schema.validate(data , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+    const value = schema.validate(data , { abortEarly: false });
+    return value;
 }
 
 export const loginValidation = (formData) => {
@@ -33,12 +29,8 @@ export const loginValidation = (formData) => {
         Password: Joi.string().required(),
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
 }
 
 export const registerValidation = (formData) => {
@@ -54,12 +46,9 @@ export const registerValidation = (formData) => {
         Fullname: Joi.string().min(5).required(),
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
 }
 
 export const validateCommentData = (data) =>  {
@@ -83,12 +72,9 @@ export const updateValidation = (formData) => {
         Fullname: Joi.string().min(5)
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
 }
 
 export const validateBlogData = (data) =>  {
