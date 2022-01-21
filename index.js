@@ -22,8 +22,8 @@ const options = {
            version: "1.0.1"
        },
        servers:[{
-         url: `http://localhost:${PORT}`,
-         surl: `https://capstonetyu.herokuapp.com/`
+         surl: `http://localhost:${PORT}`,
+         url: `https://capstonetyu.herokuapp.com/`
        }],      
    },
    apis: ["./routes/*.js"]
