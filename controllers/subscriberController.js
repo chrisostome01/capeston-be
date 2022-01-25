@@ -1,7 +1,8 @@
 /* ==================== Start:: imports =================== */ 
 import db from '../connection/connection';
 import Subscriber from '../models/Subscriber';
-import { SubscriberValidation } from "../validation/validation.js"
+import { SubscriberValidation } from "../validation/validation.js";
+import { fail, success , sendError } from '../functions/response';
 /* ==================== End:: imports =================== */ 
 
 
@@ -10,14 +11,14 @@ const addSubscriber = async (req , res) =>{
     const { Email } =  req.body;
     const isSubscriber = true ;
     const {error} = SubscriberValidation({ Email} );
-    if(error) return res.status(400).json({"error" : error.details[0].message});
+    if(error) return fail(res,400,null, error.details[0].message);  
 
-    
+    var message = '';
     try {      
       
         /* ===== Start:: making sure email is unique ====== */
             const emailExist = await Subscriber.findOne({Email : Email});
-            if(emailExist) return res.status(400).json({"error" : "You have already subscribed here" });
+            if(emailExist) return  fail(res,400,null,"You have already subscribed here"); 
         /* ====== End:: making sure email is unique ======= */
         const newSubscriber = new Subscriber({           
             Email,
@@ -25,27 +26,32 @@ const addSubscriber = async (req , res) =>{
         });
         const SaveNewSubscriber = await newSubscriber.save();
      
-        res.status(200).json({ "message":"You have been subscribed","data" : SaveNewSubscriber } );
+        message = "You have been subscribed";
+        success(res,200,SaveNewSubscriber,message);
     }
     catch(error){
-        res.status(500).json({"error" : error.message});
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 
 
 const getSubscribers = async (req , res) =>{
     let limitNumber = req.query.limit != null || req.query.limit != undefined ? req.query.limit : 6 ;
-
+    var message = '';
     try {
         const subscribers = await Subscriber.find({}).limit(limitNumber);
         if(subscribers.length !=  0){
-            res.status(200).json(subscribers);
+            message = 'Fetched';
+            success(res,200,subscribers,message);
         }
         else{
-            res.status(404).json({"message" : 'No blogs found'});
+            message = 'No comments were found';
+            fail(res,204,null,message);
         }
     } catch (error) {
-        res.status(500).json({ "message" : 'Server error' });
+        message = error.message;
+        sendError(res,500,null,message);
     }
 
 }

@@ -48,7 +48,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 /**
  * @swagger
- * /api/v1/subscribe:
+ * /api/v1/subscribers:
  *  get:
  *    summary: Returns list subscriber
  *    tags:
@@ -91,7 +91,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *              schema:
  *                $ref: "#/components/schemas/error"  
  *           
- * /api/v1/subscribe/add:
+ * /api/v1/subscribers/add:
  *  post:
  *    summary: Adding new subscriber
  *    tags:

@@ -4,6 +4,7 @@ import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import { fail, success , sendError } from '../functions/response';
 import { updateValidation , registerValidation, loginValidation} from "../validation/validation"
 
 dotenv.config();
@@ -58,7 +59,7 @@ const createNewUser = async (req,res) => {
     const { Username , password , Email ,Fullname } =  req.body;
     const emailIsVerified = false ;
     const {error} = registerValidation({ Email, password, Username, Fullname } );
-    if(error) return res.status(400).json({"error" : error.details[0].message});
+    if(error) return fail(res , 400 , null , error.details[0].message);
 
     
     try {      
@@ -67,7 +68,7 @@ const createNewUser = async (req,res) => {
       
         /* ===== Start:: making sure email is unique ====== */
             const emailExist = await Users.findOne({Email : Email});
-            if(emailExist) return res.status(400).json({"error" : "Email already exist " });
+            if(emailExist) return fail(res , 404 , null , "Email already exist");
         /* ====== End:: making sure email is unique ======= */
         const newUser = new Users({
             Username , 
@@ -78,11 +79,12 @@ const createNewUser = async (req,res) => {
             userType : "normal"
         });
         const savedUser = await newUser.save();
-     
-        res.status(200).json({ "data" : { Username ,Email , Fullname} } );
+        success(res,201,{ Username ,Email , Fullname},'Registered');
+        return;
     }
     catch(error){
-        res.status(500).json({"error" : error.message});
+        let message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* =========== End:: Creating new users ========== */
@@ -96,15 +98,16 @@ const login = async (req,res) => {
 
     try {  
         const emailExist = await Users.findOne({Email : Email});
-        if(!emailExist) return res.status(401).json({"error":"Invalid credentials"});
+        if(!emailExist) return  fail(res , 401 , null , "Invalid credentials");
 
         const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
-        if(!passwordMatch) return res.status(401).json({"error":"Invalid credentials"});
+        if(!passwordMatch) return fail(res , 401 , null , "Invalid credentials");
         // setting token
         const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
-        res.header('auth-token',token).status(200).json({"message" : "Logged in" , "token" : token });
+        res.header('auth-token',token).status(200).json({"status" : "success" , "data" : { token } , "Message":"Logged in"});
     } catch (error) {     
-        res.status(500).json({"error": error.message});    
+        let message = error.message;
+        sendError(res,500,null,message); 
     }
 
 }
@@ -113,13 +116,13 @@ const login = async (req,res) => {
 /* ============ Start:: Update Blog  ============= */
 const updateUser = async (req , res) => {
     const {error} = updateValidation(req.body);
-    if(error) return res.status(400).json({"error" : error.details[0].message});
+    if(error) return fail(res , 400 , null , error.details[0].message);
 
     try {      
         
         let id = req.user._id;
         req.body._id = id;
-        if(req.body.userType) return res.status(401).json({"error":"You can not update user type"})
+        if(req.body.userType) return  fail(res , 401 , null , `You can not update this key`);
         let updated = await Users.findOneAndUpdate(
             {_id : id },
             {$set: req.body} );
@@ -127,18 +130,20 @@ const updateUser = async (req , res) => {
             const updateInfo = await Users.findOne({_id : id});
             const resUsername = updateInfo.Username ;
             const resEmail = updateInfo.Email; 
-            const resFullname = updateInfo.Fullname 
-            res.status(200).json({"message" : "Updated" , "data" : { Username : resUsername , Email :resEmail ,Fullname :resFullname } });
+            const resFullname = updateInfo.Fullname ;
+            
+            const updatedContent =  { Username : resUsername , Email :resEmail ,Fullname :resFullname } ;
+            success(res,200,updatedContent,'Updated');
             return;         
         }        
         else{
-            res.status(500).json({"error" : 'Please try again'});
-            return;
-
+            let message = 'Please try again, with new values';
+            sendError(res,204,null,message);
         }
     }
     catch(error){
-        res.status(500).json({"error" : error.message});
+        let message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* ============== End:: Update Blog  ============= */

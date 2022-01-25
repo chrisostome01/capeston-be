@@ -53,7 +53,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 /**
  * @swagger
- * /api/v1/contact:
+ * /api/v1/contacts:
  *  get:
  *    summary: Returns list of queries
  *    tags:
@@ -96,7 +96,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *              schema:
  *                $ref: "#/components/schemas/error"  
  *           
- * /api/v1/contact/send:
+ * /api/v1/contacts/send:
  *  post:
  *    summary: Creating comment
  *    tags:

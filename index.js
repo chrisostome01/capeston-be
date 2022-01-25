@@ -7,11 +7,12 @@ import commentRoute  from './routes/commentRoute.js';
 import subscribe  from './routes/subscriberRoute.js';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
-import sendEmail from './functions/sendEmail.js';
+import cors from 'cors';
 
 
 const app = express();
 const PORT = process.env.PORT || 3500;
+app.use(cors())
  
 
 /* ================ Start:: SwaggerSetup ========================  */
@@ -41,20 +42,20 @@ app.use("/api-doc",swaggerUI.serve ,swaggerUI.setup(specs));
 /* ===== End:: user routes ============ */ 
 
 /* ===== Start:: blog routes ========== */ 
-   app.use('/api/v1/blog',  blogRoute);
+   app.use('/api/v1/blogs',  blogRoute);
 /* ===== End:: blog routes ============ */ 
 
 /* ===== Start:: blog routes ========== */ 
-   app.use('/api/v1/contact', contactUs);
+   app.use('/api/v1/contacts', contactUs);
 /* ===== End:: blog routes ============ */ 
 
 /* ===== Start:: comment routes ========== */ 
-   app.use('/api/v1/comment', commentRoute);
+   app.use('/api/v1/comments', commentRoute);
 /* ===== End:: comment routes ============ */ 
 
 
 /* ===== Start:: subscribe routes ========== */ 
-   app.use('/api/v1/subscribe', subscribe);
+   app.use('/api/v1/subscribers', subscribe);
 /* ===== End:: subscribe routes ============ */ 
 
 // sendEmail('igorkabirigi@gmail.com');

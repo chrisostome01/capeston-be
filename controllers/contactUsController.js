@@ -2,6 +2,7 @@
 import db from '../connection/connection';
 import contactUs from '../models/ContactUs.js';
 import { contactValidation } from "../validation/validation.js"
+import { fail, success , sendError } from '../functions/response';
 /* ==================== End:: imports =================== */ 
 
 
@@ -9,7 +10,7 @@ import { contactValidation } from "../validation/validation.js"
 const creatNewContact = async (req,res) => {
     const { error } = contactValidation(req.body);
     /* ===== Start:: validation ====== */
-      if(error) return res.status(400).json({"error" : error.details[0].message});
+      if(error) return fail(res , 400 , null , error.details[0].message);
     /* ===== End:: validation ====== */
 
     try {
@@ -23,9 +24,11 @@ const creatNewContact = async (req,res) => {
         });
 
         const savedContact = await newContact.save();
-        return res.status(200).json({"data" : savedContact});
+        success(res,201,savedContact,'Created');
+        return;
     } catch (error) {
-        return res.status(500).json({"error" :  error.message})
+        let message = error.message;
+        sendError(res,500,null,message);
     }
    
 }
@@ -37,10 +40,11 @@ const getContact = async (req,res) => {
 
     try {
         const contactData = await contactUs.find({}).limit(limit);
-        if(!contactData) return res.status(404).json({"error" : "No contact found"});
-        return res.status(200).json({"data" : contactData})                 
+        if(!contactData) return fail(res,204,null,"No contacts found");
+        return success(res,200,contactData,'Fetched');  
     } catch (error) {
-        res.status(500).json({"error" : error.message});
+        let message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* ===== End:: Getting contacts ===== */ 

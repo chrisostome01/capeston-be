@@ -2,11 +2,11 @@ const request = require("supertest");
 const app   =  require("./index.js").serverExport();
 
 jest.setTimeout(12000000);
-describe(" ======================== BLOG API TEST =========================== \n \n",  () => {
+describe(" ======================== BLOGs API TEST =========================== \n \n",  () => {
     var id = '';
-    it('GET /blog ----> Arrays with objects ===(HAPPY PART)===',  async () => {
+    it('GET /blogs ----> Arrays with objects ===(HAPPY PART)===',  async () => {
         return await request(app)
-            .get('/api/v1/blog?limit=1')
+            .get('/api/v1/blogs?limit=1')
             .expect('Content-Type',/json/)
             .expect(200)
             .then((response) => {
@@ -25,9 +25,9 @@ describe(" ======================== BLOG API TEST =========================== \n
                 });
        
     });
-    it('POST /api/v1/blog/create ---> without token ===(SAD PART)===', async () => {
+    it('POST /api/v1/blogs/create ---> without token ===(SAD PART)===', async () => {
         return await request(app)
-            .post('/api/v1/blog/create')
+            .post('/api/v1/blogs/create')
             .expect('Content-Type',/json/)
             .expect(401)
             .then((response) => {
@@ -37,14 +37,14 @@ describe(" ======================== BLOG API TEST =========================== \n
                     }));             
                 });        
     });
-    it('POST /api/v1/blog/create ---> with token ===(HAPPY PART)===', async () => {
+    it('POST /api/v1/blogs/create ---> with token ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .post('/api/v1/blog/create')
+            .post('/api/v1/blogs/create')
             .set({ 'auth-token': token, Accept: 'application/json' })
             .send({
                     "creatorId": "owfop0i2FMX2Bm1byYxgxg0hcFk2",
-                    "Subtitle": "New blog",
+                    "Subtitle": "New blogs",
                     "Title": "ATLP",
                     "dateCreated": "2021-12-22 15:36:5",
                     "Description": "Description",
@@ -60,9 +60,9 @@ describe(" ======================== BLOG API TEST =========================== \n
                 id = response.id;    
             });
     });
-    it(`GET /blog/find/blogId  ---> Object ===(HAPPY PART)===`, async () => {
+    it(`GET /blogs/find/blogsId  ---> Object ===(HAPPY PART)===`, async () => {
         return await request(app)
-            .get(`/api/v1/blog/find?blogId=61e65fe8d166e403df0559f1`)
+            .get(`/api/v1/blogs/find?blogsId=61e65fe8d166e403df0559f1`)
             .expect('Content-Type',/json/)
             .expect(200)
             .then((response) => {
@@ -76,14 +76,14 @@ describe(" ======================== BLOG API TEST =========================== \n
                  );  
             })           
     });
-    it('PUT /blog ---> Object blogs ===(HAPPY PART)===', async () => {
+    it('PUT /blogs ---> Object blogss ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .put('/api/v1/blog/update')
+            .put('/api/v1/blogs/update')
             .set({ 'auth-token': token, Accept: 'application/json' })
             .send({
                 "_id": "61e65fe8d166e403df0559f1",
-               "Subtitle": "Update blog",
+               "Subtitle": "Update blogs",
                "Title": "ATLP"
              })            
             .expect('Content-Type',/json/)
@@ -95,10 +95,10 @@ describe(" ======================== BLOG API TEST =========================== \n
                 }))
             });
     });
-    it('DELETE /blog  ---> Not found ===(SAD PART)===', async () => {
+    it('DELETE /blogs  ---> Not found ===(SAD PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blog/delete?blogId=61e134c7481b811737ea17bf`)
+            .delete(`/api/v1/blogs/delete?blogsId=61e134c7481b811737ea17bf`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(404)
             .then((res) => {
@@ -107,10 +107,10 @@ describe(" ======================== BLOG API TEST =========================== \n
                 }))
             });
     });
-    it('DELETE /blog  ---> found  ===(HAPPY PART)===', async () => {
+    it('DELETE /blogs  ---> found  ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blog/delete?blogId=61e6cfe97e1ebecd8ba253aa`)
+            .delete(`/api/v1/blogs/delete?blogsId=61ea9221ea7535bc16dad21b`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(200)
             .then((res) => {
@@ -144,7 +144,7 @@ describe(" ======================== COMMENTING API TEST ========================
             .set({ 'auth-token': token, Accept: 'application/json' })
             .send({
                 "comment" : "Hello",
-                "blogId" : "61e65fe8d166e403df0559f1"
+                "blogsId" : "61e65fe8d166e403df0559f1"
             })
             .expect('Content-Type',/json/)
             .expect(200)
@@ -279,7 +279,7 @@ describe(" \n \n  ================================ AUTH API TEST ===============
             .post('/api/v1/user/register')
             .send({
                 "Email" : "sezeranochrisostom123@gmail.com",
-                "Password" : "123456789"
+                "Password" : "345379990"
             })
             .expect('Content-Type',/json/)
             .expect(400)
@@ -297,7 +297,7 @@ describe(" \n \n  ================================ AUTH API TEST ===============
         return await request(app)
             .post('/api/v1/user/register')
             .send({
-                "Email" : "jhhodoe123@gmail.com",
+                "Email" : "jhhodoe12356@gmail.com",
                 "password" : "123456789",
                 "Username" : "Jhondoe1234",
                 "Fullname": "Jean done"

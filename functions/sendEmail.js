@@ -1,6 +1,7 @@
 
 import nodemailer  from 'nodemailer';
 import dotEnv from 'dotenv';
+import { success , sendError } from './response';
 dotEnv.config();
 const sendEmail = async (req , res) => {
   if(req.subscribers.length == 0 ) return ;
@@ -34,10 +35,13 @@ const sendEmail = async (req , res) => {
           <a href="https://capstonetyu.herokuapp.com/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
       `, 
     });
-    return res.status(200).json({"data" : req.NewBlog  });
+    
+    success(res,201,req.NewBlog,'Created');
+    return;
   }
   catch(error){
-    res.status(500).json({"error" : error.message})
+      let message = error.message;
+      sendError(res,500,null,message);
   }
     
   

@@ -159,6 +159,12 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *        required: true
  *        schema:
  *          type: string
+ *      - name: blogId
+ *        in: param
+ *        description: Blog id to updated is required
+ *        required: true
+ *        schema:
+ *          type: string
  *    requestBody:
  *      content:
  *        application/json:
@@ -179,7 +185,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *                    description: Image       
  *    responses:
  *        200: 
- *          description: Blog have been deleted
+ *          description: Blog have been update
  *          content:
  *            application/json:
  *              schema:
@@ -230,7 +236,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *        schema:
  *          type: string
  *      - name: blogId
- *        in: query
+ *        in: param
  *        description: blogid to delete 
  *        required: true
  *        schema:
@@ -318,14 +324,14 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /* =========== End:: Getting  Spacific blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.post('/create',authentication.admin,blog.createNewblog);
+    router.post('/create',authentication.admin,blog.createNewblog,sendEmail);
 /* =========== End:: Create blog ========= */
 
 /* ========== Start:: Delete blog ======== */ 
-    router.delete('/delete',authentication.admin,blog.deleteBlog);
+    router.delete('/delete/:blogId',authentication.admin,blog.deleteBlog);
 /* =========== End:: Delete blog ========= */
 
 /* ========== Start:: Create blog ======== */ 
-    router.put('/update',authentication.admin,blog.updateBlog);
+    router.put('/update/:blogId',authentication.admin,blog.updateBlog);
 /* =========== End:: Create blog ========= */
 export default router;

@@ -93,8 +93,7 @@ export const validateUpdateData = (data) =>  {
         Subtitle: Joi.string().min(2),
         Title: Joi.string().min(3),
         Description:Joi.string(),
-        postBanner:Joi.string(),
-        _id:Joi.string().required()
+        postBanner:Joi.string()
     })
 
     const value = formSchema.validate(data , { abortEarly: false });

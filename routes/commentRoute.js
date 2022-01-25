@@ -48,7 +48,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 /**
  * @swagger
- * /api/v1/comment:
+ * /api/v1/comments:
  *  get:
  *    summary: Returns list comments on spacific blog
  *    tags:
@@ -91,7 +91,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *              schema:
  *                $ref: "#/components/schemas/error"  
  *           
- * /api/v1/comment/create:
+ * /api/v1/comments/create:
  *  post:
  *    summary: Creating comment
  *    tags:
