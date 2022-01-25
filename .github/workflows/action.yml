@@ -14,6 +14,10 @@ jobs:
   test:
     name: Running Units Tests
     runs-on: ubuntu-latest
+    env:
+      CONNECTIONSTRING: ${{secrets.CONNECTIONSTRING}}
+      TOKEN_SECRET: ${{secrets.TOKEN_SECRET}}
+      EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
 
     steps:
     - uses: actions/checkout@v1
