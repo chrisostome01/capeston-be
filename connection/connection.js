@@ -8,7 +8,7 @@ const databaseConnection = async () =>{
         await mongoose.connect(process.env.CONNECTIONSTRING , {useNewUrlParser: true , useUnifiedTopology: true });
         // console.log('Connected');
     } catch (error) {
-        console.log('Database can be connected' , error.message);
+        console.log('Database can not be connected' , error.message , process.env.CONNECTIONSTRING);
     }
 }
 
