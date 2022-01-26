@@ -1,5 +1,5 @@
-import db from '../../connection/connection-babel/connection';
-import BlogSchema from '../../models/models-babel/Blogs';
+import db from '../connection/connection';
+import BlogSchema from '../models/Blogs';
 import Joi from 'joi';
 
 
@@ -10,6 +10,18 @@ const validateBlogData = (data) =>  {
         Title: Joi.string().required().min(3),
         Description:Joi.string().required(),
         postBanner:Joi.string().required()
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
+const validateUpdateData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().min(2),
+        Title: Joi.string().min(3),
+        Description:Joi.string(),
+        postBanner:Joi.string(),
+        _id:Joi.string().required()
     })
 
     const value = formSchema.validate(data , { abortEarly: false });
@@ -39,7 +51,7 @@ const getAllBlogs = async (req ,  res) => {
 
 /* ============ Start:: Getting spacific Blogs ============= */
 const getSpacificBlog = async (req , res) => {
-    let blogId = req.params.blogId;
+    let blogId = req.query.blogId;
     if(blogId == null || blogId == undefined || blogId.trim() == '') return res.status(400).json({"error" : "Bad request"}) ;
     try {
      
@@ -87,11 +99,11 @@ const createNewblog = async (req , res) => {
             rate
         });
         const savedBlog = await newBlog.save();
-        res.status(200).json({"blogId" : savedBlog });
+        res.status(200).json({"data" : savedBlog });
     }
     catch(error){
         console.log(error);
-        res.status(500).json({"message" : "Server error"});
+        res.status(500).json({"error" : "Server error"});
     }
 }
 /* ============== End:: Create Blog  ============= */
@@ -101,9 +113,9 @@ const createNewblog = async (req , res) => {
 const deleteBlog = async (req , res) => {
    
   
-    if(!req.body._id) return res.status(400).json({'error' : "Bad request"}) ;
+    if(!req.query.blogId) return res.status(400).json({'error' : "Bad request"}) ;
 
-    let blogId = req.body._id;
+    let blogId = req.query.blogId;
     let query = {_id : blogId};
     try {      
         const blogExist = await BlogSchema.findOne({_id : blogId});
@@ -126,29 +138,20 @@ const deleteBlog = async (req , res) => {
 
 /* ============ Start:: Update Blog  ============= */
 const updateBlog = async (req , res) => {
-    const { Subtitle,Title,Description,postBanner } =  req.body;
-    const { error } = validateBlogData({ Subtitle,Title,Description,postBanner }) ;
+    const { error } = validateUpdateData(req.body) ;
     let rate = 1;
     if(error) return res.status(400).json({"error" : error.details[0].message }) ;
 
     try {
         let blogId = req.body._id;
-       
+        let bodyData =req.body;
         let data = await BlogSchema.findOneAndUpdate(
             {_id : blogId},
-            {$set:{ Subtitle,Title,Description,postBanner}});
+            { $set:bodyData });
         
-        if(data.matchedCount === 1 ){
-            
-            if(data.modifiedCount == 1){
-                res.status(200).json({"message" : "Updated" , "data" : `${blogId}` });
-                return;
-            }
-            else{
-                res.status(200).json({"message" : `No change`});
-                return;
-            }
-            
+        if(data){
+            res.status(200).json({"message" : "Updated" , "data" : `${blogId}` });
+            return;            
         }
         else{
             res.status(404).json({"error" : 'we don\'t have that blog'});

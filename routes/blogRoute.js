@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import * as authentication from '../../middlewares/middlewares-babel/authenticate.js'
-import * as blog from '../../controllers/controller-babel/blogController.js';
+import * as authentication from '../middlewares/authenticate.js'
+import * as blog from '../controllers/blogController.js';
 
 const router =  express.Router();
 router.use(bodyParser.json());
@@ -9,6 +9,10 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 /* ========== Start:: Getting  All blogs ======== */ 
     router.get('/',blog.getAllBlogs);
+/* =========== End:: Getting  All blogs ========= */
+
+/* ========== Start:: Getting  All blogs ======== */ 
+    router.get('/limited',blog.getAllBlogs);
 /* =========== End:: Getting  All blogs ========= */
 
 /* ========== Start:: Getting  Spacific blog ======== */ 

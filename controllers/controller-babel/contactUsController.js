@@ -47,6 +47,7 @@ const creatNewContact = async (req, res) => {
       "data": savedContact
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       "error": error.message
     });

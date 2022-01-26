@@ -7,17 +7,9 @@ exports.default = void 0;
 
 var _mongoose = _interopRequireDefault(require("mongoose"));
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const blogSchema = new _mongoose.default.Schema({
-  creatorId: {
-    type: String,
-    required: 'Creator id is required'
-  },
   Subtitle: {
     type: String,
     required: 'Subtile is requiered'
@@ -35,6 +27,10 @@ const blogSchema = new _mongoose.default.Schema({
     required: 'In information are required'
   },
   postBanner: {
+    type: String,
+    required: 'Post image is require'
+  },
+  creatorId: {
     type: String,
     required: 'Post image is require'
   }

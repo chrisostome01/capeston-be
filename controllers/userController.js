@@ -1,78 +1,14 @@
 /* ==================== Start:: imports =================== */ 
-import db from '../../connection/connection-babel/connection';
-import Users from '../../models/models-babel/Users';
+import db from '../connection/connection';
+import Users from '../models/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import { registerValidation,loginValidation  } from "../../validation/validation.js"
+import { registerValidation,loginValidation  } from "../validation/validation"
+
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
-
-/* ==================== Start:: Valiadation ==================== */ 
-
-const loginValidation = (formData) => {
-    const schema = Joi.object({
-        Email : Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-        .required()
-        .messages({
-            'string.empty': `"a" cannot be an empty field`
-          }),
-        Password: Joi.string().required(),
-    })
-    
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-const registerValidation = (formData) => {
-    const schema = Joi.object({
-        Email : Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-        .required()
-        .messages({
-            'string.empty': `"a" cannot be an empty field`
-          }),
-        password: Joi.string().min(6).alphanum().required(),
-        Username: Joi.string().min(6).required(),
-        Fullname: Joi.string().min(5).required(),
-    })
-    
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-
-const updateValidation = (formData) => {
-    const schema = Joi.object({
-        Email : Joi.string()
-        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-        .messages({
-            'string.empty': `"a" cannot be an empty field`
-          }),     
-        Username: Joi.string().min(6),
-        Fullname: Joi.string().min(5)
-    })
-    
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
-}
-
-/* ==================== End:: Valiadation ==================== */ 
-
 
 /* =========== Start:: Getting all users ========== */
 const selectAllUsers = async (req , res) => {
@@ -159,12 +95,12 @@ const login = async (req,res) => {
         if(!emailExist) return res.status(400).json({"error":"Unknown user email "});
 
         const passwordMatch = await bcrypt.compare(Password,emailExist.Password);
-        if(!passwordMatch) return res.status(400).json({"error":"Wrong password"});
+        if(!passwordMatch) return res.status(401).json({"error":"Wrong password"});
         // setting token
         const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
         res.header('auth-token',token).status(200).json({"message" : "Logged in" , "token" : token });
     } catch (error) {     
-        console.log(error);    
+        res.status(500).json({"error":"Server error"});    
     }
 
 }

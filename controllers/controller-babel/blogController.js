@@ -27,6 +27,21 @@ const validateBlogData = data => {
   });
   return value;
 };
+
+const validateUpdateData = data => {
+  const formSchema = _joi.default.object({
+    Subtitle: _joi.default.string().min(2),
+    Title: _joi.default.string().min(3),
+    Description: _joi.default.string(),
+    postBanner: _joi.default.string(),
+    _id: _joi.default.string().required()
+  });
+
+  const value = formSchema.validate(data, {
+    abortEarly: false
+  });
+  return value;
+};
 /* ============ End:: Validation ==================== */
 
 /* ============ Start:: Getting all Blogs but with limit ============= */
@@ -59,7 +74,7 @@ const getAllBlogs = async (req, res) => {
 exports.getAllBlogs = getAllBlogs;
 
 const getSpacificBlog = async (req, res) => {
-  let blogId = req.params.blogId;
+  let blogId = req.query.blogId;
   if (blogId == null || blogId == undefined || blogId.trim() == '') return res.status(400).json({
     "error": "Bad request"
   });
@@ -134,12 +149,12 @@ const createNewblog = async (req, res) => {
     });
     const savedBlog = await newBlog.save();
     res.status(200).json({
-      "blogId": savedBlog
+      "data": savedBlog
     });
   } catch (error) {
     console.log(error);
     res.status(500).json({
-      "message": "Server error"
+      "error": "Server error"
     });
   }
 };
@@ -151,10 +166,10 @@ const createNewblog = async (req, res) => {
 exports.createNewblog = createNewblog;
 
 const deleteBlog = async (req, res) => {
-  if (!req.body._id) return res.status(400).json({
+  if (!req.query.blogId) return res.status(400).json({
     'error': "Bad request"
   });
-  let blogId = req.body._id;
+  let blogId = req.query.blogId;
   let query = {
     _id: blogId
   };
@@ -194,19 +209,8 @@ exports.deleteBlog = deleteBlog;
 
 const updateBlog = async (req, res) => {
   const {
-    Subtitle,
-    Title,
-    Description,
-    postBanner
-  } = req.body;
-  const {
     error
-  } = validateBlogData({
-    Subtitle,
-    Title,
-    Description,
-    postBanner
-  });
+  } = validateUpdateData(req.body);
   let rate = 1;
   if (error) return res.status(400).json({
     "error": error.details[0].message
@@ -214,30 +218,19 @@ const updateBlog = async (req, res) => {
 
   try {
     let blogId = req.body._id;
+    let bodyData = req.body;
     let data = await _Blogs.default.findOneAndUpdate({
       _id: blogId
     }, {
-      $set: {
-        Subtitle,
-        Title,
-        Description,
-        postBanner
-      }
+      $set: bodyData
     });
 
-    if (data.matchedCount === 1) {
-      if (data.modifiedCount == 1) {
-        res.status(200).json({
-          "message": "Updated",
-          "data": `${blogId}`
-        });
-        return;
-      } else {
-        res.status(200).json({
-          "message": `No change`
-        });
-        return;
-      }
+    if (data) {
+      res.status(200).json({
+        "message": "Updated",
+        "data": `${blogId}`
+      });
+      return;
     } else {
       res.status(404).json({
         "error": 'we don\'t have that blog'
