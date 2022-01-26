@@ -6,10 +6,9 @@ import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import { updateValidation } from "../validation/validation"
 
+
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
-
-
 
 /* =========== Start:: Getting all users ========== */
 const selectAllUsers = async (req , res) => {
