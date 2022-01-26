@@ -1,9 +1,10 @@
 {
-  "name": "node",
+  "name": "capstone_be",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
+
     "build": "babel controllers/contactUsController.js -d controllers/controller-babel/ ",
     "start": "nodemon --exec npm run dev",
     "dev": "babel-node index.js"
