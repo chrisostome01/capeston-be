@@ -11,7 +11,7 @@ var _bodyParser = _interopRequireDefault(require("body-parser"));
 
 var authentication = _interopRequireWildcard(require("../../middlewares/middlewares-babel/authenticate.js"));
 
-var blog = _interopRequireWildcard(require("../../controllers/controller-babel/blogController.js"));
+var contact = _interopRequireWildcard(require("../../controllers/controller-babel/contactUsController"));
 
 function _getRequireWildcardCache(nodeInterop) {
   if (typeof WeakMap !== "function") return null;
@@ -77,28 +77,13 @@ router.use(_bodyParser.default.urlencoded({
 }));
 /* ========== Start:: Getting  All blogs ======== */
 
-router.get('/', authentication.auth, blog.getAllBlogs);
+router.post('/', contact.creatNewContact);
 /* =========== End:: Getting  All blogs ========= */
 
 /* ========== Start:: Getting  Spacific blog ======== */
 
-router.get('/:blogId', blog.getSpacificBlog);
+router.get('/', authentication.admin, contact.getContact);
 /* =========== End:: Getting  Spacific blog ========= */
-
-/* ========== Start:: Create blog ======== */
-
-router.post('/create', blog.createNewblog);
-/* =========== End:: Create blog ========= */
-
-/* ========== Start:: Delete blog ======== */
-
-router.delete('/delete', blog.deleteBlog);
-/* =========== End:: Delete blog ========= */
-
-/* ========== Start:: Create blog ======== */
-
-router.put('/update', blog.updateBlog);
-/* =========== End:: Create blog ========= */
 
 var _default = router;
 exports.default = _default;
