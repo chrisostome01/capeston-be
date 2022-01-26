@@ -191,38 +191,49 @@ const deleteBlog = async (req, res) => {
 exports.deleteBlog = deleteBlog;
 
 const updateBlog = async (req, res) => {
+  const {
+    Subtitle,
+    Title,
+    Description,
+    postBanner
+  } = req.body;
+  const {
+    error
+  } = validateBlogData({
+    Subtitle,
+    Title,
+    Description,
+    postBanner
+  });
+  let rate = 1;
+  if (error) return res.status(400).json({
+    "error": error.details[0].message
+  });
+
   try {
-    let blogId = req.body.blogId;
-    let formData = req.body;
-
-    if (blogId.trim() === '' || blogId.trim() === null) {
-      res.status(400).json({
-        'message': "Bad request"
-      });
-      return;
-    } // if(formData.trim() === '' || formData.trim() === null){
-    //     res.status(400).json({'message' : "Provide what to update"});
-    //     return;
-    // } 
-
-
+    let blogId = req.body._id;
     let query = {
       _id: blogId
     };
     let data = await _Blogs.default.updateOne({
       query,
-      $set: formData
+      $set: {
+        Subtitle,
+        Title,
+        Description,
+        postBanner
+      }
     });
 
     if (data.matchedCount === 1) {
       if (data.modifiedCount == 1) {
         res.status(200).json({
-          "success": `blog with this id ${blogId} have been updated`
+          "success": `${blogId}`
         });
         return;
       } else {
         res.status(200).json({
-          "success": `Nothing to update on id ${blogId}`
+          "success": `No change`
         });
         return;
       }
