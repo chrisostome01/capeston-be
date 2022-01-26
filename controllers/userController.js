@@ -18,10 +18,13 @@ const selectAllUsers = async (req , res) => {
     try {
         let limitNumber = req.query.limit != "" ||  req.query.limit != null ? req.query.limit  : 6 ;
         const users =  await Users.find({}).limit(limitNumber);
-        if(users.length === 0 ) return res.status(404).json({"error" : "No users is currently registered"});
-        res.status(200).json({"data" : users});  
+        if(users.length === 0 ) return fail(res , 404 , null ,"No users is currently registered");
+        success(res,200,users,'Fetched');
+        return;
+        
     } catch (error) {
-        res.status(500).json({"error" : error.message})
+        message = error.message;
+        sendError(res,500,null,message);
     }    
 }
 /* =========== end:: Getting all users ============ */
@@ -30,8 +33,7 @@ const selectAllUsers = async (req , res) => {
 const getSpacificUser = async (req , res) => {
     let username = req.query.username;
     if(username.trim() === '' || username.trim() === null){
-        res.status(400).json({'error' : "Bad request"});
-        return;
+        return fail(res , 400 , null ,"Bad request");
     }
 
     try {
@@ -39,17 +41,17 @@ const getSpacificUser = async (req , res) => {
         const userFound = await Users.find(query);
          
         if(userFound.length == 0){
-            res.status(404).json({'error' : "User does not exist"});
-            return;
+            return fail(res , 404 , null ,"User does not exist");
         }
         
         else{
             const {Username , Email , Fullname} =  userFound[0] ;
-            res.status(200).json({"message" : "found" ,'data' : { Username , Email , Fullname}});
+            success(res,200,{Username , Email , Fullname},'Fetched');
             return;
         }
     } catch (error) {
-        res.status(500).json({"error" : error.message });
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* =========== End:: Getting spacific users ======= */
@@ -68,7 +70,7 @@ const createNewUser = async (req,res) => {
       
         /* ===== Start:: making sure email is unique ====== */
             const emailExist = await Users.findOne({Email : Email});
-            if(emailExist) return fail(res , 404 , null , "Email already exist");
+            if(emailExist) return fail(res , 400 , null , "Email already exist");
         /* ====== End:: making sure email is unique ======= */
         const newUser = new Users({
             Username , 
@@ -104,7 +106,7 @@ const login = async (req,res) => {
         if(!passwordMatch) return fail(res , 401 , null , "Invalid credentials");
         // setting token
         const token = jwt.sign({_id : emailExist._id},process.env.TOKEN_SECRET);
-        res.header('auth-token',token).status(200).json({"status" : "success" , "data" : { token } , "Message":"Logged in"});
+        res.header('auth-token',token).status(200).json({"status" : "success" , "data" : { token } , "message":"Logged in"});
     } catch (error) {     
         let message = error.message;
         sendError(res,500,null,message); 

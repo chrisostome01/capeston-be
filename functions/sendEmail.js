@@ -23,18 +23,18 @@ const sendEmail = async (req , res) => {
         pass: process.env.EMAIL_PASSWORD, 
       },
     });
-    let info = await transporter.sendMail({
-      from: 'Sezerano J Chrysostome 👻" <codeinblog@gmail.com>', 
-      to: receiver, 
-      subject: "Hello ✔ please checkout this blog", 
-      text: "Hello world?", 
-      html: `
-          <h1>${req.NewBlog.Title}</h1>
-          <a href="http://127.0.0.1:3500/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
-          <br><br>
-          <a href="https://capstonetyu.herokuapp.com/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
-      `, 
-    });
+    // let info = await transporter.sendMail({
+    //   from: 'Sezerano J Chrysostome 👻" <codeinblog@gmail.com>', 
+    //   to: receiver, 
+    //   subject: "Hello ✔ please checkout this blog", 
+    //   text: "Hello world?", 
+    //   html: `
+    //       <h1>${req.NewBlog.Title}</h1>
+    //       <a href="http://127.0.0.1:3500/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
+    //       <br><br>
+    //       <a href="https://capstonetyu.herokuapp.com/api/v1/blog/find?blogId=${req.NewBlog._id}" >Read more</a>
+    //   `, 
+    // });
     
     success(res,201,req.NewBlog,'Created');
     return;
