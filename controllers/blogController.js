@@ -124,7 +124,7 @@ const deleteBlog = async (req , res) => {
 }
 /* ============== End:: Create Blog  ============= */
 
-/* ============ Start:: Create Blog  ============= */
+/* ============ Start:: Update Blog  ============= */
 const updateBlog = async (req , res) => {
     const { Subtitle,Title,Description,postBanner } =  req.body;
     const { error } = validateBlogData({ Subtitle,Title,Description,postBanner }) ;
@@ -133,12 +133,10 @@ const updateBlog = async (req , res) => {
 
     try {
         let blogId = req.body._id;
-        let query = {_id : blogId};
-
-        let data = await BlogSchema.updateOne({
-            query,
-            $set:{ Subtitle,Title,Description,postBanner}
-        });
+       
+        let data = await BlogSchema.findOneAndUpdate(
+            {_id : blogId},
+            {$set:{ Subtitle,Title,Description,postBanner}});
         
         if(data.matchedCount === 1 ){
             
@@ -161,6 +159,6 @@ const updateBlog = async (req , res) => {
         res.status(500).json({"error" : 'Server error'});        
     }
 }
-/* ============== End:: Create Blog  ============= */
+/* ============== End:: Update Blog  ============= */
 
 export { getAllBlogs , getSpacificBlog ,createNewblog,deleteBlog,updateBlog }

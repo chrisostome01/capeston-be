@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import * as users from '../../controllers/controller-babel/userController.js';
-
+import * as authentication from '../../middlewares/middlewares-babel/authenticate.js'
 
 const router = express.Router();
 router.use(bodyParser.json());
@@ -30,5 +30,11 @@ router.post('/register',users.createNewUser );
 router.post('/login',users.login );
 
 /* ====== End:: Login users =========== */ 
+
+/* ====== Start:: Update users =========== */ 
+
+router.put('/update',authentication.auth,users.updateUser );
+
+/* ====== End:: Update users =========== */ 
 
 export default router;
