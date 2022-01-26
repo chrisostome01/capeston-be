@@ -4,11 +4,10 @@ import Users from '../../models/models-babel/Users';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import Joi from 'joi';
+import { registerValidation,loginValidation  } from "../../validation/validation.js"
 
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
-
 
 /* ==================== Start:: Valiadation ==================== */ 
 
@@ -74,15 +73,16 @@ const updateValidation = (formData) => {
 
 /* ==================== End:: Valiadation ==================== */ 
 
+
 /* =========== Start:: Getting all users ========== */
 const selectAllUsers = async (req , res) => {
   
     try {
         let limitNumber = req.query.limit;
         const users =  await Users.find({}).limit(limitNumber);
-        res.json(users);  
+        res.status(200).json({"data" : users});  
     } catch (error) {
-        console.log( error );
+        res.status(500).json({"error" : error.message})
     }    
 }
 /* =========== end:: Getting all users ============ */
@@ -91,7 +91,7 @@ const selectAllUsers = async (req , res) => {
 const getSpacificUser = async (req , res) => {
     let username = req.query.username;
     if(username.trim() === '' || username.trim() === null){
-        res.status(400).json({'message' : "Bad request"});
+        res.status(400).json({'error' : "Bad request"});
         return;
     }
 
@@ -99,7 +99,7 @@ const getSpacificUser = async (req , res) => {
         var query = { Username : username };
         const userFound = await Users.find(query);
         if(userFound.length == 0){
-            res.status(404).json({'message' : "User does not exist"});
+            res.status(404).json({'error' : "User does not exist"});
             return;
         }
         else{
@@ -108,7 +108,7 @@ const getSpacificUser = async (req , res) => {
         }
     } catch (error) {
         console.log(error);
-        res.status(500).json({"message" : "Server error"});
+        res.status(500).json({"error" : error.message });
     }
 }
 /* =========== End:: Getting spacific users ======= */
@@ -139,11 +139,10 @@ const createNewUser = async (req,res) => {
         });
         const savedUser = await newUser.save();
      
-        res.status(200).json({ "userId" : savedUser._id} );
+        res.status(200).json({ "data" : { Username ,Email , Fullname} } );
     }
     catch(error){
-        console.log(error);
-        res.status(500).json({"error" : "Server error"});
+        res.status(500).json({"error" : error.message});
     }
 }
 /* =========== End:: Creating new users ========== */
