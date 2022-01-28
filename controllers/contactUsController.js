@@ -1,9 +1,9 @@
-/* ==================== Start:: imports =================== */ 
+/* ==================== Start:: imports =================== */
 import db from '../connection/connection';
 import contactUs from '../models/ContactUs.js';
 import { contactValidation } from "../validation/validation.js"
 import { fail, success , sendError } from '../functions/response';
-/* ==================== End:: imports =================== */ 
+
 
 
 /* ===== Start:: Inserting new contact ===== */ 

@@ -7,10 +7,9 @@ import jwt from 'jsonwebtoken';
 import { fail, success , sendError } from '../functions/response';
 import { updateValidation , registerValidation, loginValidation} from "../validation/validation"
 
+
 dotenv.config();
 /* ==================== End:: imports ==================== */ 
-
-
 
 /* =========== Start:: Getting all users ========== */
 const selectAllUsers = async (req , res) => {
