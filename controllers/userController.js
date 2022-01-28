@@ -31,13 +31,13 @@ const selectAllUsers = async (req , res) => {
 
 /* =========== Start:: Getting spacific users ===== */
 const getSpacificUser = async (req , res) => {
-    let username = req.query.username;
-    if(username.trim() === '' || username.trim() === null){
+    let id = req.user._id ;  ;
+    if(id.trim() === '' || id.trim() === null){
         return fail(res , 400 , null ,"Bad request");
     }
 
     try {
-        var query = { Username : username };
+        var query = { _id : id };
         const userFound = await Users.find(query);
          
         if(userFound.length == 0){
@@ -45,8 +45,8 @@ const getSpacificUser = async (req , res) => {
         }
         
         else{
-            const {Username , Email , Fullname} =  userFound[0] ;
-            success(res,200,{Username , Email , Fullname},'Fetched');
+            const {Username , Email , Fullname , userType , profile} =  userFound[0] ;
+            success(res,200,{Username , Email , Fullname , userType , profile},'Fetched');
             return;
         }
     } catch (error) {

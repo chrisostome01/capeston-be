@@ -15,7 +15,8 @@ describe(" ======================== BLOGs API TEST =========================== \
                         "status": expect.any(String),
                         "data": expect.arrayContaining([ expect.any(Object) ]),
                         "message": expect.any(String),
-                    }));
+                    })
+                 );
                 });
        
     });
@@ -94,7 +95,7 @@ describe(" ======================== BLOGs API TEST =========================== \
     it('DELETE /blogs  ---> found  ===(HAPPY PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blogs/delete/61f100bdc77cdea2d0382493`)
+            .delete(`/api/v1/blogs/delete/61e66429e169efae83f22a3a`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(200)
             .then((res) => {
@@ -106,7 +107,7 @@ describe(" ======================== BLOGs API TEST =========================== \
     it('DELETE /blogs  ---> Not found ===(SAD PART)===', async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .delete(`/api/v1/blogs/delete/61f100bdc77cdea2d0382493`)
+            .delete(`/api/v1/blogs/delete/61e66429e169efae83f22a3a`)
             .set({ 'auth-token': token, Accept: 'application/json' })         
             .expect(404)
             .then((res) => {
@@ -296,7 +297,7 @@ describe(" \n \n  ================================ AUTH API TEST ===============
         return await request(app)
             .post('/api/v1/user/register')
             .send({
-                "Email" : "jhhodoe1235678911@gmail.com",
+                "Email" : "jhhodoe123hn567891rt1@gmail.com",
                 "password" : "123456789",
                 "Username" : "Jhondoe1234",
                 "Fullname": "Jean done"
@@ -371,10 +372,10 @@ describe(" \n \n  ================================ AUTH API TEST ===============
                 });
        
     });
-    it('GET /USER =====(HAPPY PART)===== FIND USER BY USERNAME',  async () => {
+    it('GET /USER =====(HAPPY PART)===== FIND USER BY TOKEN ',  async () => {
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MWUxOTAyYWVkYjJkODM5NDUzMzRmMTYiLCJpYXQiOjE2NDIyNDU0MjN9.RIRkq6kwdsAxRZW10sscZsbYKOAVuQXfrV6Ys_7oF60";
         return await request(app)
-            .get('/api/v1/user/find?username=titoNewName')
+            .get('/api/v1/user/find')
             .set({ 'auth-token': token, Accept: 'application/json' })
             .expect('Content-Type',/json/)
             .expect(200)
