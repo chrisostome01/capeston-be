@@ -339,6 +339,11 @@ router.get('/', authentication.admin,users.selectAllUsers);
 router.get('/find',authentication.auth,users.getSpacificUser);
 
 /* ========================= End:: Get spacific user ====================== */ 
+/* ==================== Start:: Get spacific user ========================= */ 
+
+router.get('/find/:userId',authentication.auth,users.getSpacificUserWithUserId);
+
+/* ========================= End:: Get spacific user ====================== */ 
 
 /* ====== Start:: Creating users =========== */ 
 

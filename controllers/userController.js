@@ -28,6 +28,35 @@ const selectAllUsers = async (req , res) => {
 }
 /* =========== end:: Getting all users ============ */
 
+
+/* =========== Start:: Getting spacific users with userid ===== */
+const getSpacificUserWithUserId = async (req , res) => {
+    let id = req.params.userId;
+    if(id.trim() === '' || id.trim() === null){
+        return fail(res , 400 , null ,"Bad request");
+    }
+
+    try {
+        var query = { _id : id };
+        const userFound = await Users.find(query);
+         
+        if(userFound.length == 0){
+            return fail(res , 404 , null ,"User does not exist");
+        }
+        
+        else{
+            const {Username , Email , Fullname , profile} =  userFound[0] ;
+            success(res,200,{Username , Email , Fullname  , profile},'Fetched');
+            return;
+        }
+    } catch (error) {
+        message = error.message;
+        sendError(res,500,null,message);
+    }
+}
+/* =========== End:: Getting spacific users with userid ======= */
+
+
 /* =========== Start:: Getting spacific users ===== */
 const getSpacificUser = async (req , res) => {
     let id = req.user._id ;  ;
@@ -148,4 +177,4 @@ const updateUser = async (req , res) => {
     }
 }
 /* ============== End:: Update Blog  ============= */
-export { selectAllUsers , getSpacificUser , createNewUser ,login ,updateUser }
+export { selectAllUsers , getSpacificUser , createNewUser ,login ,updateUser ,getSpacificUserWithUserId}
