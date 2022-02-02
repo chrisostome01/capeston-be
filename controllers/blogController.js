@@ -1,48 +1,29 @@
 import db from '../connection/connection';
 import BlogSchema from '../models/Blogs';
 import Joi from 'joi';
+import { validateUpdateData , validateBlogData  } from '../validation/validation';
+import subscriber from '../models/Subscriber';
+import { fail, success , sendError } from '../functions/response';
 
-
-/* ============ Start:: validation ================== */
-const validateBlogData = (data) =>  {
-    const formSchema = Joi.object({
-        Subtitle: Joi.string().required().min(2),
-        Title: Joi.string().required().min(3),
-        Description:Joi.string().required(),
-        postBanner:Joi.string().required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-const validateUpdateData = (data) =>  {
-    const formSchema = Joi.object({
-        Subtitle: Joi.string().min(2),
-        Title: Joi.string().min(3),
-        Description:Joi.string(),
-        postBanner:Joi.string(),
-        _id:Joi.string().required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-/* ============ End:: Validation ==================== */
 
 /* ============ Start:: Getting all Blogs but with limit ============= */
 const getAllBlogs = async (req ,  res) => {
     let limitNumber = req.query.limit != null || req.query.limit != undefined ? req.query.limit : 6 ;
 
     try {
+        let message = '';
         const blogsData = await BlogSchema.find({}).limit(limitNumber);
         if(blogsData.length !=  0){
-            res.status(200).json(blogsData);
+            message = 'Fetched';
+            success(res,200,blogsData,message);
         }
         else{
-            res.status(404).json({"message" : 'No blogs found'});
+            message = 'No blogs were found';
+            fail(res,204,null,message)
         }
     } catch (error) {
-        res.status(500).json({ "message" : 'Server error' });
+        message = error.message;
+        sendError(res,500,null,message);
     }
 
 }
@@ -52,27 +33,31 @@ const getAllBlogs = async (req ,  res) => {
 /* ============ Start:: Getting spacific Blogs ============= */
 const getSpacificBlog = async (req , res) => {
     let blogId = req.query.blogId;
-    if(blogId == null || blogId == undefined || blogId.trim() == '') return res.status(400).json({"error" : "Bad request"}) ;
+    if(blogId == null || blogId == undefined || blogId.trim() == '') return fail(res,400,null,"Bad request"); 
+    var message = '';
     try {
      
         let query = {_id : blogId};
       
         if(blogId.trim() === '' || blogId.trim() === null){
-            res.status(400).json({'error' : "Bad request"});
+            res.status(400).json({"status": "error" ,"data" : null ,'message' : "Bad request"});
             return;
         } 
 
         let data = await BlogSchema.find(query);
         if(data.length != 0){
-            res.status(200).json({'message' : "Found" , "data" : data});
+            message = "Found";
+            success(res,200,data,message);
             return;
         }
         else{
-            res.status(404).json({"error" : 'blog not found'});
+            message = "blog not found";
+            fail(res,404,null,message); 
             return;
         }
     } catch (error) {   
-        res.status(500).json({"error" : 'Server error'});        
+        message = error.message;
+        sendError(res,500,null,message);      
     }
 }
 /* ============== End:: Getting spacific Blogs ============= */
@@ -80,11 +65,12 @@ const getSpacificBlog = async (req , res) => {
 
 
 /* ============ Start:: Create Blog  ============= */
-const createNewblog = async (req , res) => {
+const createNewblog = async (req , res , next) => {
     const { Subtitle,Title,Description,postBanner} =  req.body;
     const { error } = validateBlogData({ Subtitle,Title,Description,postBanner }) ;
     let rate = 1;
-    if(error) return res.status(400).json({"error" : error.details[0].message }) ;
+    if(error) return fail(res , 400 , null , error.details[0].message);
+    let message = '';
     try {
         
         const dateCreated = Date.now();
@@ -99,11 +85,14 @@ const createNewblog = async (req , res) => {
             rate
         });
         const savedBlog = await newBlog.save();
-        res.status(200).json({"data" : savedBlog });
+        req.subscribers = await subscriber.find({isSubscriber : true});
+        req.NewBlog = savedBlog;
+        next(); 
+         
     }
     catch(error){
-        console.log(error);
-        res.status(500).json({"error" : "Server error"});
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* ============== End:: Create Blog  ============= */
@@ -113,53 +102,60 @@ const createNewblog = async (req , res) => {
 const deleteBlog = async (req , res) => {
    
   
-    if(!req.query.blogId) return res.status(400).json({'error' : "Bad request"}) ;
+    if(!req.params.blogId) return fail(res,400,null,"Bad request"); 
 
-    let blogId = req.query.blogId;
+    let blogId = req.params.blogId;
     let query = {_id : blogId};
+    let message = '';
     try {      
         const blogExist = await BlogSchema.findOne({_id : blogId});
-        if(!blogExist) return res.status(404).json({"error" : "Blog does not exist"});
+        if(!blogExist) return res.status(404).json({"status":"error", "data":null, "message" : "Blog does not exist"});
 
         let data = await BlogSchema.deleteOne(query);
         if(data.deletedCount === 1 ){
-            res.status(200).json({"message" : `blog with this id ${blogId} have been deleted`});
+            message = `blog with this id ${blogId} have been deleted`;
+            success(res,200,blogId,message);
             return;
         }
         else{
-            res.status(404).json({"error" : 'we don\'t have that blog'});
+            message = `We don't have blog with this id ${blogId}`;
+            fail(res,404,null,message);
             return;
         }
     } catch (error) {   
-        res.status(500).json({"error" : 'Server error , make sure you you id is accurate'});        
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* ============== End:: Create Blog  ============= */
 
 /* ============ Start:: Update Blog  ============= */
 const updateBlog = async (req , res) => {
-    const { error } = validateUpdateData(req.body) ;
-    let rate = 1;
-    if(error) return res.status(400).json({"error" : error.details[0].message }) ;
+    const { error } = validateUpdateData(req.body);
+    let message = '';
+    if(error) return fail(res , 400 , null , error.details[0].message);
 
     try {
-        let blogId = req.body._id;
+        var blogId = req.params.blogId;
         let bodyData =req.body;
         let data = await BlogSchema.findOneAndUpdate(
             {_id : blogId},
             { $set:bodyData });
-        
-        if(data){
-            res.status(200).json({"message" : "Updated" , "data" : data });
+        const findeUpdateBlog = await BlogSchema.findOne({_id : blogId});
+        if(findeUpdateBlog){
+            message = `Updated`;
+            success(res,200,findeUpdateBlog,message);
             return;            
         }
         else{
-            res.status(404).json({"error" : 'we don\'t have that blog'});
+            message = `We don't have blog with this id ${blogId}`;
+            fail(res,404,null,message);
             return;
 
         }
     } catch (error) {   
-        res.status(500).json({"error" : 'Server error'});        
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* ============== End:: Update Blog  ============= */

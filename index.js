@@ -4,11 +4,15 @@ import userRoutes from './routes/userRoutes.js';
 import blogRoute  from './routes/blogRoute.js';
 import contactUs  from './routes/contactUsRoute.js';
 import commentRoute  from './routes/commentRoute.js';
+import subscribe  from './routes/subscriberRoute.js';
 import swaggerUI from 'swagger-ui-express';
 import swaggerJsDoc from 'swagger-jsdoc';
+import cors from 'cors';
+
 
 const app = express();
 const PORT = process.env.PORT || 3500;
+app.use(cors());
  
 
 /* ================ Start:: SwaggerSetup ========================  */
@@ -20,7 +24,8 @@ const options = {
            version: "1.0.1"
        },
        servers:[{
-         surl: `http://localhost:${PORT}`,
+         url: `http://localhost:${PORT}`,
+       },{
          url: `https://capstonetyu.herokuapp.com/`
        }],      
    },
@@ -37,17 +42,23 @@ app.use("/api-doc",swaggerUI.serve ,swaggerUI.setup(specs));
 /* ===== End:: user routes ============ */ 
 
 /* ===== Start:: blog routes ========== */ 
-   app.use('/api/v1/blog',  blogRoute);
+   app.use('/api/v1/blogs',  blogRoute);
 /* ===== End:: blog routes ============ */ 
 
 /* ===== Start:: blog routes ========== */ 
-   app.use('/api/v1/contact', contactUs);
+   app.use('/api/v1/contacts', contactUs);
 /* ===== End:: blog routes ============ */ 
 
 /* ===== Start:: comment routes ========== */ 
-   app.use('/api/v1/comment', commentRoute);
+   app.use('/api/v1/comments', commentRoute);
 /* ===== End:: comment routes ============ */ 
 
+
+/* ===== Start:: subscribe routes ========== */ 
+   app.use('/api/v1/subscribers', subscribe);
+/* ===== End:: subscribe routes ============ */ 
+
+// sendEmail('igorkabirigi@gmail.com');
 app.listen(PORT , () => console.log(`Server running on port ${PORT}`));
 
 

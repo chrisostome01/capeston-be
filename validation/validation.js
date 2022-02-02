@@ -14,15 +14,9 @@ export const contactValidation = (data) => {
                 .required(),
     });
 
-    try {
-        const value = schema.validate(data , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+    const value = schema.validate(data , { abortEarly: false });
+    return value;
 }
-
-
 
 export const loginValidation = (formData) => {
     const schema = Joi.object({
@@ -35,12 +29,8 @@ export const loginValidation = (formData) => {
         Password: Joi.string().required(),
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
 }
 
 export const registerValidation = (formData) => {
@@ -56,14 +46,20 @@ export const registerValidation = (formData) => {
         Fullname: Joi.string().min(5).required(),
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
 }
 
+export const validateCommentData = (data) =>  {
+        const formSchema = Joi.object({
+            comment: Joi.string().required(),
+            blogId:Joi.required()
+        })
+
+        const value = formSchema.validate(data , { abortEarly: false });
+        return value ;
+}
 
 export const updateValidation = (formData) => {
     const schema = Joi.object({
@@ -76,10 +72,43 @@ export const updateValidation = (formData) => {
         Fullname: Joi.string().min(5)
     })
     
-    try {
-        const value = schema.validate(formData , { abortEarly: false });
-        return value;
-    } catch (error) {
-        console.log(error);
-    }
+
+    const value = schema.validate(formData , { abortEarly: false });
+    return value;
+}
+
+export const validateBlogData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().required().min(2),
+        Title: Joi.string().required().min(3),
+        Description:Joi.string().required(),
+        postBanner:Joi.string().required()
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
+export const validateUpdateData = (data) =>  {
+    const formSchema = Joi.object({
+        Subtitle: Joi.string().min(2),
+        Title: Joi.string().min(3),
+        Description:Joi.string(),
+        postBanner:Joi.string()
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
+}
+export const SubscriberValidation = (data) => {
+    const formSchema = Joi.object({
+        Email: Joi.string()
+        .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
+        .required()
+        .messages({
+            'string.empty': `"a" cannot be an empty field`
+          })
+    })
+
+    const value = formSchema.validate(data , { abortEarly: false });
+    return value ;
 }

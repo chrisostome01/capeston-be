@@ -3,12 +3,11 @@ dotEnv.config();
 import mongoose from 'mongoose';
 
 
-const databaseConnection = async () =>{
+const databaseConnection = () =>{
     try {
-        await mongoose.connect(process.env.CONNECTIONSTRING , {useNewUrlParser: true , useUnifiedTopology: true });
-        console.log('Connected');
+        mongoose.connect(process.env.CONNECTIONSTRING , {useNewUrlParser: true , useUnifiedTopology: true });
     } catch (error) {
-        console.log('Database can be connected' , error.message);
+        console.log('Database can not be connected' , error.message);
     }
 }
 

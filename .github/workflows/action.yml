@@ -1,0 +1,38 @@
+name: testing actions
+
+on:
+  pull_request:
+    branches: 
+      - testing-workflow-m
+      - testing-workflow-dm
+  push:
+    branches: 
+      - testing-workflow-m
+      - testing-workflow-dm
+
+jobs:
+  test:
+    name: Running Units Tests
+    runs-on: ubuntu-latest
+    env:
+      CONNECTIONSTRING: ${{secrets.CONNECTIONSTRING}}
+      TOKEN_SECRET: ${{secrets.TOKEN_SECRET}}
+      EMAIL_PASSWORD: ${{secrets.EMAIL_PASSWORD}}
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Install
+      run: npm install
+    - name: Test
+      run: npm run test
+
+
+
+
+
+
+

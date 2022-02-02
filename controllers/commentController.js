@@ -2,30 +2,18 @@
     import db from '../connection/connection';
     import Comment from '../models/Comment';
     import BlogSchema from '../models/Blogs';
-    import Joi from 'joi';
+    import { validateCommentData } from '../validation/validation'
+    import { fail, success , sendError } from '../functions/response';
 /* ==================== End:: imports =================== */ 
-
-/* ================== Start:: validation ================ */ 
-const validateCommentData = (data) =>  {
-    const formSchema = Joi.object({
-        comment: Joi.string().required(),
-        blogId:Joi.required()
-    })
-
-    const value = formSchema.validate(data , { abortEarly: false });
-    return value ;
-}
-/* =================== End:: validation ================= */ 
-
 
 /* ================== Start:: Creating Commenting ================ */ 
 const newCommenting = async (req,res) => {
     const {  comment , blogId} =  req.body;
     const { error } = validateCommentData({ comment ,blogId}) ;
-    if(error) return res.status(400).json({"error" : error.details[0].message }) ;
+    if(error) return fail(res , 400 , null , error.details[0].message);
     try {   
         const blogExist = await BlogSchema.findOne({_id : blogId});
-        if(!blogExist) return res.status(404).json({"error" : "Blog does not exist"});
+        if(!blogExist) return fail(res , 404 , null , "Not found");
         
         
         const dateCreated = Date.now();
@@ -37,30 +25,35 @@ const newCommenting = async (req,res) => {
             dateCreated,            
         });
         const SavedNewComment = await newComment.save();
-        res.status(200).json({"data" : SavedNewComment });
+        success(res,201,SavedNewComment,'Created');
+        return;
     }
     catch(error){
-        res.status(500).json({"message" : "Please try again"});
+        let message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* =================== End:: Creating Commenting ================= */ 
 
 /* ================== Start:: Getting Commenting ================ */ 
 const gettingComment = async (req,res) => {
-    if(!req.query.q || !req.query.limit) return res.status(400).json({"error" : "Bad request"}) ;
+    if(!req.query.q || !req.query.limit) return fail(res , 400 , null , 'Bad request');;
     let limitNumber = req.query.limit ;   
     let blogid = req.query.q;
-
+    var message = "";
     try {
         const commentData = await Comment.find({ blogId : blogid }).limit(limitNumber);
         if(commentData.length !=  0){
-            res.status(200).json({"data" : commentData});
+            message = 'Fetched';
+            success(res,200,commentData,message);
         }
         else{
-            res.status(404).json({"error" : 'No comments found'});
+            message = 'No comment were found';
+            fail(res,204,null,message)
         }
     } catch (error) {
-        res.status(500).json({ "error" : 'Server error' });
+        message = error.message;
+        sendError(res,500,null,message);
     }
 }
 /* =================== End:: Getting Commenting ================= */ 

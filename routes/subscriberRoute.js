@@ -1,7 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import * as authentication from '../middlewares/authenticate.js'
-import * as comment from '../controllers/commentController.js';
+import * as Subscribe from '../controllers/subscriberController';
 
 const router =  express.Router();
 router.use(bodyParser.json());
@@ -11,7 +11,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  * @swagger
  * components:
  *   schemas:
- *    Comment:
+ *    Subscriber:
  *       type: object
  *       required:
  *         - "userId"
@@ -40,35 +40,35 @@ router.use(bodyParser.urlencoded({ extended: false }));
 /**
  * @swagger
  * tags:
- *  name: Comment
- *  description: Commenting api
+ *  name: Subscriber
+ *  description: News letter subscriber
  * 
  * */ 
 
 
 /**
  * @swagger
- * /api/v1/comments:
+ * /api/v1/subscribers:
  *  get:
- *    summary: Returns list comments on spacific blog
+ *    summary: Returns list subscriber
  *    tags:
- *    - "Comment"
+ *    - "Subscriber"
  *    parameters:
  *      - name: limit
  *        in: query
- *        description: To return a spacific limits of blogs
+ *        description: To return a spacific limits of subscriber
  *        required: false
  *        schema:
  *          type: integer
- *      - name: q
- *        in: query
- *        description: Blog id to retrive comment for
+ *      - name: auth-token
+ *        in: header
+ *        description: You need be authorised to have this token
  *        required: true
  *        schema: 
  *          type: string
  *    responses:
  *      200: 
- *        description: This is list comment on blogs selected
+ *        description: This is list Subscribers
  *        content:
  *          application/json:
  *              schema:
@@ -77,9 +77,9 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *                    data:
  *                      type: array
  *                      items:
- *                         $ref: "#/components/schemas/Comment"   
+ *                         $ref: "#/components/schemas/Subscriber"   
  *      404:
- *        description: No comment found
+ *        description: No subscribers found
  *        content:
  *          application/json:
  *              schema:
@@ -91,33 +91,23 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *              schema:
  *                $ref: "#/components/schemas/error"  
  *           
- * /api/v1/comments/create:
+ * /api/v1/subscribers/add:
  *  post:
- *    summary: Creating comment
+ *    summary: Adding new subscriber
  *    tags:
- *    - "Comment"
- *    parameters:
- *      - name: auth-token
- *        in: header
- *        description: Authorization reqiured
- *        required: true
- *        schema:
- *          type: string
+ *    - "Subscriber"
  *    requestBody:
  *      content:
  *        application/json:
  *            schema:
  *              required: true
  *              properties:
- *                 blogId:
+ *                 Email:
  *                    type: string
- *                    description: This hold  the blog id to be commented on 
- *                 Comment:
- *                    type: string
- *                    description: User comment  
+ *                    description: This hold email which subscribing
  *    responses:
  *        200: 
- *          description: Comment created response
+ *          description: Subscribed response
  *          content:
  *            application/json:
  *                schema:
@@ -126,7 +116,7 @@ router.use(bodyParser.urlencoded({ extended: false }));
  *                    data:
  *                      type: array
  *                      items: 
- *                        $ref: "#/components/schemas/Comment"
+ *                        $ref: "#/components/schemas/Subscriber"
  *        400:
  *          description: Invalid inputs
  *          content:
@@ -143,12 +133,12 @@ router.use(bodyParser.urlencoded({ extended: false }));
 
 
 
-/* ========== Start:: Getting  All blogs ======== */ 
-    router.post('/create',authentication.auth ,comment.newCommenting);
-/* =========== End:: Getting  All blogs ========= */
+/* ========== Start:: Add  subscriber ======== */ 
+    router.post('/add',Subscribe.addSubscriber);
+/* =========== End:: Add  subscriber ========= */
 
-/* ========== Start:: Getting  Spacific blog ======== */ 
-    router.get('/',comment.gettingComment);
-/* =========== End:: Getting  Spacific blog ========= */
+/* ========== Start:: Get  subscriber ======== */ 
+    router.get('/',authentication.admin,Subscribe.getSubscribers);
+/* =========== End:: Get  subscriber ========= */
 
 export default router;
