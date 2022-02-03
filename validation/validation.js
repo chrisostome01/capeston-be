@@ -69,7 +69,8 @@ export const updateValidation = (formData) => {
             'string.empty': `"a" cannot be an empty field`
           }),     
         Username: Joi.string().min(6),
-        Fullname: Joi.string().min(5)
+        Fullname: Joi.string().min(5),
+        profile: Joi.string()
     })
     
 
