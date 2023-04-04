@@ -38,7 +38,7 @@ jobs:
       with:
         render-token: ${{ secrets.RENDER_TOKEN }}
         github-token: ${{ secrets.TOKEN }}
-        service-id: srv-cgksc9seoogkndl3t3qg
+        service-id: srv-cgm1b687oslael6bejhg
         retries: 20
         wait: 16000
         sleep: 30000
