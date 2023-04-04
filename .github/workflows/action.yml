@@ -42,10 +42,4 @@ jobs:
         retries: 20
         wait: 16000
         sleep: 30000
-
-
-
-
-
-
-
+        
