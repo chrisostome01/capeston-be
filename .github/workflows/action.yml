@@ -29,6 +29,17 @@ jobs:
       run: npm install
     - name: Test
       run: npm run test
+      deploy:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Wait for Render Deployment
+       uses: bounceapp/render-action@0.6.0
+       with:
+          render-token: ${{ secrets.RENDER_API }}
+          service-id: srv-cgm1b687oslael6bejhg
+          retries: 20
+          wait: 16000
+          sleep: 30000
 
 
 
