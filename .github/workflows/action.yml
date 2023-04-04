@@ -3,12 +3,12 @@ name: testing actions
 on:
   pull_request:
     branches: 
-      - testing-workflow-m
-      - testing-workflow-dm
+      - dev
+      - main
   push:
     branches: 
-      - testing-workflow-m
-      - testing-workflow-dm
+      - dev
+      - main
 
 jobs:
   test:
