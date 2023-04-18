@@ -36,6 +36,7 @@ const newCommenting = async (req,res) => {
 /* =================== End:: Creating Commenting ================= */ 
 
 /* ================== Start:: Getting Commenting ================ */ 
+
 const gettingComment = async (req,res) => {
     if(!req.query.q || !req.query.limit) return fail(res , 400 , null , 'Bad request');;
     let limitNumber = req.query.limit ;   
